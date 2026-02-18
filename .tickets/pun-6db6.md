@@ -1,6 +1,6 @@
 ---
 id: pun-6db6
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-02-18T13:02:38Z
