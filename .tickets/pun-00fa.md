@@ -1,6 +1,6 @@
 ---
 id: pun-00fa
-status: open
+status: closed
 deps: [pun-e554, pun-ccc6, pun-6c1a]
 links: []
 created: 2026-02-18T13:02:36Z
