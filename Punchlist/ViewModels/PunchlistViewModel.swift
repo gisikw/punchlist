@@ -4,6 +4,7 @@ import Foundation
 final class PunchlistViewModel {
     var items: [Item] = []
     var isConnected: Bool { webSocket.isConnected }
+    var debugLog: [String] { webSocket.debugLog }
 
     private let api = PunchlistAPI()
     private let webSocket = WebSocketManager()

@@ -3,6 +3,8 @@ import SwiftUI
 struct ContentView: View {
     @State private var viewModel = PunchlistViewModel()
     @State private var inputText = ""
+    @State private var showDebugLog = false
+    @FocusState private var inputFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -12,6 +14,7 @@ struct ContentView: View {
             inputBar
         }
         .background(Color.punchBackground)
+        .onTapGesture { inputFocused = false }
         .onAppear { viewModel.start() }
         .onDisappear { viewModel.stop() }
     }
@@ -33,7 +36,7 @@ struct ContentView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 8) {
-                    ForEach(viewModel.items) { item in
+                    ForEach(viewModel.items.reversed()) { item in
                         ItemRow(
                             item: item,
                             onToggle: { viewModel.toggleItem(item) },
@@ -42,7 +45,8 @@ struct ContentView: View {
                         .id(item.id)
                     }
                     .onDelete { offsets in
-                        let toDelete = offsets.map { viewModel.items[$0] }
+                        let reversed = viewModel.items.reversed()
+                        let toDelete = offsets.map { Array(reversed)[$0] }
                         for item in toDelete {
                             viewModel.deleteItem(item)
                         }
@@ -51,6 +55,7 @@ struct ContentView: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 4)
             }
+            .scrollDismissesKeyboard(.interactively)
             .defaultScrollAnchor(.bottom)
         }
     }
@@ -62,11 +67,27 @@ struct ContentView: View {
                 .font(.system(size: 12))
                 .foregroundStyle(Color.punchGray)
                 .padding(.vertical, 8)
+                .onTapGesture { showDebugLog.toggle() }
+        }
+
+        if showDebugLog {
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 2) {
+                    ForEach(viewModel.debugLog, id: \.self) { entry in
+                        Text(entry)
+                            .font(.system(size: 10, design: .monospaced))
+                            .foregroundStyle(Color.punchGray)
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+            .frame(maxHeight: 150)
+            .background(Color.punchBackground)
         }
     }
 
     private var inputBar: some View {
-        InputBar(text: $inputText) {
+        InputBar(text: $inputText, isFocused: $inputFocused) {
             viewModel.addItem(text: inputText)
             inputText = ""
         }

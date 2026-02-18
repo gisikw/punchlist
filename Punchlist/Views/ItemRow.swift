@@ -7,27 +7,18 @@ struct ItemRow: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
-            Button(action: onToggle) {
-                HStack(spacing: 14) {
-                    circle
-                    text
-                }
-                .contentShape(Rectangle())
+            HStack(spacing: 14) {
+                circle
+                text
             }
-            .buttonStyle(.plain)
 
             Spacer(minLength: 0)
 
             if !item.done {
-                Button(action: onBump) {
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(Color(red: 0.87, green: 0.87, blue: 0.87)) // #DDDDDD
-                        .padding(.leading, 16)
-                        .padding(.vertical, 12)
-                        .padding(.trailing, 8)
-                }
-                .buttonStyle(.plain)
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(Color(red: 0.87, green: 0.87, blue: 0.87)) // #DDDDDD
+                    .padding(.trailing, 8)
             }
         }
         .padding(.horizontal, 12)
@@ -35,6 +26,27 @@ struct ItemRow: View {
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .shadow(color: .black.opacity(0.08), radius: 1.5, y: 1)
+        .contentShape(Rectangle())
+        .overlay {
+            if !item.done {
+                GeometryReader { geo in
+                    HStack(spacing: 0) {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture { onToggle() }
+
+                        Color.clear
+                            .frame(width: geo.size.width * 0.2)
+                            .contentShape(Rectangle())
+                            .onTapGesture { onBump() }
+                    }
+                }
+            } else {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { onToggle() }
+            }
+        }
     }
 
     private var circle: some View {
