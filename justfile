@@ -158,4 +158,4 @@ clean:
 check: sync
     #!/usr/bin/env bash
     nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
-      'cd {{remote_dir}} && swiftc -typecheck -sdk \$(xcrun --sdk iphonesimulator --show-sdk-path) -target arm64-apple-ios17.0-simulator Punchlist/Models/Item.swift Punchlist/Services/PunchlistAPI.swift Punchlist/Services/WebSocketManager.swift Punchlist/ViewModels/PunchlistViewModel.swift Punchlist/Views/ItemRow.swift Punchlist/Views/InputBar.swift Punchlist/Views/ContentView.swift Punchlist/PunchlistApp.swift 2>&1'"
+      'cd {{remote_dir}} && swiftc -typecheck -sdk \$(xcrun --sdk iphonesimulator --show-sdk-path) -target arm64-apple-ios17.0-simulator Punchlist/Models/Item.swift Punchlist/Models/Project.swift Punchlist/Services/PunchlistAPI.swift Punchlist/Services/WebSocketManager.swift Punchlist/ViewModels/PunchlistViewModel.swift Punchlist/Views/ItemRow.swift Punchlist/Views/InputBar.swift Punchlist/Views/ContentView.swift Punchlist/PunchlistApp.swift 2>&1'"

@@ -48,8 +48,8 @@ struct ContentView: View {
                 .foregroundStyle(Color.punchGray)
                 .tracking(0.5)
             Spacer()
-            if let project = viewModel.currentProject, !project.isDefault {
-                Text("#\(project.slug)")
+            if let tag = projectTag {
+                Text(tag)
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(Color.punchGray)
                     .tracking(0.5)
@@ -58,6 +58,11 @@ struct ContentView: View {
         .padding(.horizontal, 20)
         .padding(.top, 16)
         .padding(.bottom, 12)
+    }
+
+    private var projectTag: String? {
+        guard let project = viewModel.currentProject, !project.isDefault else { return nil }
+        return "#\(project.slug)"
     }
 
     private var itemList: some View {
