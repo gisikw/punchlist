@@ -15,6 +15,8 @@ final class PunchlistViewModel {
         return projects.first { $0.slug == currentProjectSlug }
     }
 
+    var isPersonal: Bool { currentProjectSlug == "personal" }
+
     /// The slug used for API calls. nil means the server default (personal list).
     var currentSlug: String? {
         currentProjectSlug == "personal" ? nil : currentProjectSlug
@@ -25,10 +27,6 @@ final class PunchlistViewModel {
     private var pendingQueue: [() async -> Void] = []
 
     func start() {
-        // Always reset to personal on (re)start — matches what the server sends
-        currentProjectSlug = "personal"
-        items = []
-
         webSocket.start { [weak self] items in
             guard let self else { return }
             self.items = items
@@ -46,6 +44,12 @@ final class PunchlistViewModel {
                 self.items = fetched
             }
         }
+    }
+
+    /// Reset to personal — called on app foreground, not on WS reconnect
+    func resetToPersonal() {
+        guard currentProjectSlug != "personal" else { return }
+        switchToProject(slug: "personal")
     }
 
     func stop() {

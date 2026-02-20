@@ -43,7 +43,7 @@ struct ContentView: View {
         .onDisappear { viewModel.stop() }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
-                viewModel.start()
+                viewModel.resetToPersonal()
                 showProjectPicker = false
             }
         }
@@ -113,23 +113,26 @@ struct ContentView: View {
     }
 
     private var itemList: some View {
-        ScrollViewReader { proxy in
+        let reversed = Array(viewModel.items.reversed())
+        return ScrollViewReader { proxy in
             ScrollView {
                 LazyVStack(spacing: 8) {
-                    ForEach(viewModel.items.reversed()) { item in
+                    ForEach(Array(reversed.enumerated()), id: \.element.id) { index, item in
+                        if !viewModel.isPersonal,
+                           index > 0,
+                           let prev = reversed[index - 1].priority,
+                           let curr = item.priority,
+                           prev != curr {
+                            Divider()
+                                .padding(.vertical, 4)
+                        }
                         ItemRow(
                             item: item,
+                            isPersonal: viewModel.isPersonal,
                             onToggle: { viewModel.toggleItem(item) },
                             onBump: { viewModel.bumpItem(item) }
                         )
                         .id(item.id)
-                    }
-                    .onDelete { offsets in
-                        let reversed = viewModel.items.reversed()
-                        let toDelete = offsets.map { Array(reversed)[$0] }
-                        for item in toDelete {
-                            viewModel.deleteItem(item)
-                        }
                     }
                 }
                 .padding(.horizontal, 16)

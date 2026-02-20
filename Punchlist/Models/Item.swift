@@ -5,4 +5,5 @@ struct Item: Codable, Identifiable, Equatable {
     var text: String
     var done: Bool
     let created: String
+    var priority: Int?
 }

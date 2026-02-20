@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ItemRow: View {
     let item: Item
+    let isPersonal: Bool
     let onToggle: () -> Void
     let onBump: () -> Void
 
@@ -28,23 +29,37 @@ struct ItemRow: View {
         .shadow(color: .black.opacity(0.08), radius: 1.5, y: 1)
         .contentShape(Rectangle())
         .overlay {
-            if !item.done {
-                GeometryReader { geo in
-                    HStack(spacing: 0) {
-                        Color.clear
-                            .contentShape(Rectangle())
-                            .onTapGesture { onToggle() }
+            if isPersonal {
+                // Personal: left 80% toggles, right 20% bumps
+                if !item.done {
+                    GeometryReader { geo in
+                        HStack(spacing: 0) {
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture { onToggle() }
 
-                        Color.clear
-                            .frame(width: geo.size.width * 0.2)
-                            .contentShape(Rectangle())
-                            .onTapGesture { onBump() }
+                            Color.clear
+                                .frame(width: geo.size.width * 0.2)
+                                .contentShape(Rectangle())
+                                .onTapGesture { onBump() }
+                        }
                     }
+                } else {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { onToggle() }
                 }
             } else {
+                // Project: tap bumps undone items, tap toggles done items
                 Color.clear
                     .contentShape(Rectangle())
-                    .onTapGesture { onToggle() }
+                    .onTapGesture {
+                        if item.done {
+                            onToggle()
+                        } else {
+                            onBump()
+                        }
+                    }
             }
         }
     }
