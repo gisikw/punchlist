@@ -1,6 +1,6 @@
 ---
 id: pun-4e44
-status: open
+status: closed
 deps: [pun-a24c, pun-9934]
 links: []
 created: 2026-02-20T14:02:02Z

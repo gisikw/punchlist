@@ -1,6 +1,6 @@
 ---
 id: pun-a24c
-status: open
+status: closed
 deps: []
 links: []
 created: 2026-02-20T14:01:57Z
