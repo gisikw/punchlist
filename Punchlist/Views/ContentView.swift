@@ -21,23 +21,19 @@ struct ContentView: View {
                     inputBar
                 }
                 if showProjectPicker {
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .mask(
-                            LinearGradient(
-                                stops: [
-                                    .init(color: .white, location: 0),
-                                    .init(color: .white, location: 0.4),
-                                    .init(color: .clear, location: 0.75),
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .allowsHitTesting(true)
-                        .onTapGesture {
-                            dismissPicker()
-                        }
+                    LinearGradient(
+                        stops: [
+                            .init(color: Color.punchBackground.opacity(0.95), location: 0),
+                            .init(color: Color.punchBackground.opacity(0.6), location: 0.2),
+                            .init(color: Color.punchBackground.opacity(0.6), location: 1.0),
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .allowsHitTesting(true)
+                    .onTapGesture {
+                        dismissPicker()
+                    }
                 }
             }
         }
