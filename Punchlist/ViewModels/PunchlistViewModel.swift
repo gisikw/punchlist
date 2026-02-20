@@ -4,19 +4,20 @@ import Foundation
 final class PunchlistViewModel {
     var items: [Item] = []
     var projects: [Project] = []
-    var currentProjectIndex = 0
+    var currentProjectSlug: String = "personal"
     var isConnected: Bool { webSocket.isConnected }
     var debugLog: [String] { webSocket.debugLog }
 
     var currentProject: Project? {
-        guard currentProjectIndex >= 0, currentProjectIndex < projects.count else { return nil }
-        return projects[currentProjectIndex]
+        if currentProjectSlug == "personal" {
+            return projects.first { $0.isDefault }
+        }
+        return projects.first { $0.slug == currentProjectSlug }
     }
 
     /// The slug used for API calls. nil means the server default (personal list).
     var currentSlug: String? {
-        guard let project = currentProject else { return nil }
-        return project.isDefault ? nil : project.slug
+        currentProjectSlug == "personal" ? nil : currentProjectSlug
     }
 
     private let api = PunchlistAPI()
@@ -24,6 +25,10 @@ final class PunchlistViewModel {
     private var pendingQueue: [() async -> Void] = []
 
     func start() {
+        // Always reset to personal on (re)start — matches what the server sends
+        currentProjectSlug = "personal"
+        items = []
+
         webSocket.start { [weak self] items in
             guard let self else { return }
             self.items = items
@@ -47,18 +52,15 @@ final class PunchlistViewModel {
         webSocket.stop()
     }
 
-    func switchToProject(index: Int) {
-        guard index >= 0, index < projects.count, index != currentProjectIndex else { return }
-        currentProjectIndex = index
-
-        let project = projects[index]
-        let slug = project.isDefault ? "personal" : project.slug
+    func switchToProject(slug: String) {
+        guard slug != currentProjectSlug else { return }
+        currentProjectSlug = slug
 
         // Tell the server to switch WS broadcast
         webSocket.switchProject(slug)
 
         // Also fetch via REST for immediate display
-        let apiSlug = project.isDefault ? nil : project.slug
+        let apiSlug = slug == "personal" ? nil : slug
         Task {
             if let fetched = try? await api.fetchItems(project: apiSlug) {
                 self.items = fetched

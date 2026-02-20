@@ -4,41 +4,77 @@ struct ContentView: View {
     @State private var viewModel = PunchlistViewModel()
     @State private var inputText = ""
     @State private var showDebugLog = false
-    @State private var selectedTab = 0
+    @State private var showProjectPicker = false
+    @Environment(\.scenePhase) private var scenePhase
     @FocusState private var inputFocused: Bool
 
     var body: some View {
-        Group {
-            if viewModel.projects.isEmpty {
-                // Before projects load, show single page
-                projectPage
-            } else {
-                TabView(selection: $selectedTab) {
-                    ForEach(Array(viewModel.projects.enumerated()), id: \.offset) { index, _ in
-                        projectPage
-                            .tag(index)
-                    }
+        VStack(spacing: 0) {
+            header
+            if showProjectPicker {
+                projectPicker
+            }
+            ZStack {
+                VStack(spacing: 0) {
+                    itemList
+                    offlineNotice
+                    inputBar
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .onChange(of: selectedTab) { _, newIndex in
-                    viewModel.switchToProject(index: newIndex)
+                if showProjectPicker {
+                    Rectangle()
+                        .fill(.ultraThinMaterial)
+                        .mask(
+                            LinearGradient(
+                                stops: [
+                                    .init(color: .white, location: 0),
+                                    .init(color: .white, location: 0.4),
+                                    .init(color: .clear, location: 0.75),
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .allowsHitTesting(true)
+                        .onTapGesture {
+                            dismissPicker()
+                        }
                 }
             }
         }
         .background(Color.punchBackground)
+        .onTapGesture { inputFocused = false }
         .onAppear { viewModel.start() }
         .onDisappear { viewModel.stop() }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                viewModel.start()
+                showProjectPicker = false
+            }
+        }
     }
 
-    private var projectPage: some View {
+    private var projectPicker: some View {
         VStack(spacing: 0) {
-            header
-            itemList
-            offlineNotice
-            inputBar
+            ForEach(viewModel.projects) { project in
+                Button {
+                    viewModel.switchToProject(slug: project.isDefault ? "personal" : project.slug)
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        showProjectPicker = false
+                    }
+                } label: {
+                    HStack {
+                        Text(project.isDefault ? "personal" : "#\(project.slug)")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(project.slug == (viewModel.currentProject?.slug ?? "") ? Color.punchText : Color.punchGray)
+                            .tracking(0.5)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
+                }
+            }
         }
-        .background(Color.punchBackground)
-        .onTapGesture { inputFocused = false }
+        .padding(.bottom, 8)
     }
 
     private var header: some View {
@@ -48,21 +84,36 @@ struct ContentView: View {
                 .foregroundStyle(Color.punchGray)
                 .tracking(0.5)
             Spacer()
-            if let tag = projectTag {
-                Text(tag)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(Color.punchGray)
-                    .tracking(0.5)
-            }
+            Text(projectTag ?? "")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(Color.punchGray)
+                .tracking(0.5)
+                .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if showProjectPicker {
+                        dismissPicker()
+                    } else {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showProjectPicker = true
+                        }
+                    }
+                }
         }
         .padding(.horizontal, 20)
-        .padding(.top, 16)
-        .padding(.bottom, 12)
+        .padding(.top, 4)
     }
 
     private var projectTag: String? {
         guard let project = viewModel.currentProject, !project.isDefault else { return nil }
         return "#\(project.slug)"
+    }
+
+    private func dismissPicker() {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+            showProjectPicker = false
+        }
+        viewModel.switchToProject(slug: "personal")
     }
 
     private var itemList: some View {

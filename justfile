@@ -148,6 +148,11 @@ distribute: archive
     echo "Distributed! Install from:"
     echo "  https://DIST_HOST_REDACTED"
 
+# Open install page in browser
+install:
+    @echo "https://DIST_HOST_REDACTED"
+    @echo "Open on your iOS device to install."
+
 # Clean build artifacts on obrien
 clean:
     #!/usr/bin/env bash
