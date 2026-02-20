@@ -4,9 +4,33 @@ struct ContentView: View {
     @State private var viewModel = PunchlistViewModel()
     @State private var inputText = ""
     @State private var showDebugLog = false
+    @State private var selectedTab = 0
     @FocusState private var inputFocused: Bool
 
     var body: some View {
+        Group {
+            if viewModel.projects.isEmpty {
+                // Before projects load, show single page
+                projectPage
+            } else {
+                TabView(selection: $selectedTab) {
+                    ForEach(Array(viewModel.projects.enumerated()), id: \.offset) { index, _ in
+                        projectPage
+                            .tag(index)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .onChange(of: selectedTab) { _, newIndex in
+                    viewModel.switchToProject(index: newIndex)
+                }
+            }
+        }
+        .background(Color.punchBackground)
+        .onAppear { viewModel.start() }
+        .onDisappear { viewModel.stop() }
+    }
+
+    private var projectPage: some View {
         VStack(spacing: 0) {
             header
             itemList
@@ -15,8 +39,6 @@ struct ContentView: View {
         }
         .background(Color.punchBackground)
         .onTapGesture { inputFocused = false }
-        .onAppear { viewModel.start() }
-        .onDisappear { viewModel.stop() }
     }
 
     private var header: some View {
@@ -26,6 +48,12 @@ struct ContentView: View {
                 .foregroundStyle(Color.punchGray)
                 .tracking(0.5)
             Spacer()
+            if let project = viewModel.currentProject, !project.isDefault {
+                Text("#\(project.slug)")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.punchGray)
+                    .tracking(0.5)
+            }
         }
         .padding(.horizontal, 20)
         .padding(.top, 16)

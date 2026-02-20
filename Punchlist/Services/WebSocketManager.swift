@@ -29,6 +29,17 @@ final class WebSocketManager {
         log("stop")
     }
 
+    func switchProject(_ slug: String) {
+        guard let task else { return }
+        let msg = "{\"project\":\"\(slug)\"}"
+        log("switch → \(slug)")
+        task.send(.string(msg)) { [weak self] error in
+            if let error {
+                self?.log("switch send fail: \(error.localizedDescription)")
+            }
+        }
+    }
+
     private func connect() {
         connectCount += 1
         let attempt = connectCount
