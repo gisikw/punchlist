@@ -33,6 +33,24 @@ Punchlist is built on a few deliberate constraints:
 - **No dependencies.** Zero third-party libraries. URLSession for HTTP, URLSessionWebSocketTask for WebSocket. That's the whole networking stack.
 - **No reordering UI.** You can finish things and you can pick what's next. That's the entire interaction model. Fewer choices means less friction.
 
+## Wait, what's that other tab?
+
+<p align="center">
+  <img src="assets/screenshot-project.png" width="300" alt="Punchlist project view — an agent toggle, in-progress and failed tasks, and a Knockout pipeline at work" />
+</p>
+
+Oh. You found the project drawer. Don't worry about that — those aren't for you. Go back to your personal list. Those teeth aren't going to brush themselves.
+
+...you're still here. Fine. Yes, you can reorder things on the project lists. No, you can't tap to complete them. Bit of a broken experience, really. Not sure why you'd even want to —
+
+Okay, and that toggle at the top? That spawns an agent. It runs a [Knockout](https://github.com/gisikw/knockout) pipeline against the project's task list and starts working through it. The blue one there — see it? — that's the one it's chewing on right now. You can kill the agent any time; that's what the slider is for.
+
+If there's an item it can't figure out, it'll mark it red so you know to look at it later. Those orange ones? Dependencies. Once the agent knocks out the prereqs, it'll get to them. It's fine. It's working. Stop hovering.
+
+Anyway. That's quite enough of that. Best to go back to the personal list. You can always route things to a project with a `#project` tag in the item text if you want. Whoops — forgot to mention that earlier, huh?
+
+Did you remember to flip the laundry?
+
 ## Building
 
 Punchlist is a SwiftUI app targeting iOS 17+. Builds happen on a remote macOS host via SSH.
