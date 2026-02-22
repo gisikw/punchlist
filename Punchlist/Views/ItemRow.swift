@@ -16,6 +16,10 @@ struct ItemRow: View {
         item.status == "blocked"
     }
 
+    private var hasUnresolvedDep: Bool {
+        item.hasUnresolvedDep == true
+    }
+
     private var hasPulse: Bool {
         isInProgress
     }
@@ -27,6 +31,7 @@ struct ItemRow: View {
     private var accentColor: Color {
         if isBlocked { return .punchPink }
         if isInProgress { return .punchBlue }
+        if hasUnresolvedDep { return .punchOrange }
         return .clear
     }
 
@@ -113,6 +118,7 @@ struct ItemRow: View {
         if item.done { return .punchGreen }
         if isBlocked { return .punchPink }
         if isInProgress { return .punchBlue }
+        if hasUnresolvedDep { return .punchOrange }
         return .punchGray
     }
 
@@ -121,7 +127,9 @@ struct ItemRow: View {
             if hasActiveStatus {
                 Circle()
                     .fill(accentColor.opacity(hasPulse ? (pulseActive ? 0.25 : 0.1) : 0.18))
-                    .frame(width: 30, height: 30)
+            } else if hasUnresolvedDep {
+                Circle()
+                    .fill(accentColor.opacity(0.18))
             }
 
             Circle()
@@ -138,6 +146,7 @@ struct ItemRow: View {
                     .foregroundStyle(.white)
             }
         }
+        .frame(width: 30, height: 30)
     }
 
     private var text: some View {
@@ -156,5 +165,6 @@ extension Color {
     static let punchGray = Color(red: 0.576, green: 0.573, blue: 0.576)    // #939293
     static let punchGreen = Color(red: 0.663, green: 0.863, blue: 0.463)   // #A9DC76
     static let punchBlue = Color(red: 0.471, green: 0.863, blue: 0.91)     // #78DCE8
-    static let punchPink = Color(red: 1.0, green: 0.38, blue: 0.533)      // #FF6188
+    static let punchPink = Color(red: 1.0, green: 0.38, blue: 0.533)       // #FF6188
+    static let punchOrange = Color(red: 0.957, green: 0.647, blue: 0.486)  // #F3A57C
 }

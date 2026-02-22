@@ -7,4 +7,5 @@ struct Item: Codable, Identifiable, Equatable {
     let created: String
     var priority: Int?
     var status: String?
+    var hasUnresolvedDep: Bool?
 }
