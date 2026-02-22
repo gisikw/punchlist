@@ -3,7 +3,7 @@ import Foundation
 struct PunchlistAPI {
     let baseURL: URL
 
-    init(baseURL: URL = URL(string: "https://PUNCH_API_HOST_REDACTED")!) {
+    init(baseURL: URL = URL(string: "https://punch.gisi.network")!) {
         self.baseURL = baseURL
     }
 

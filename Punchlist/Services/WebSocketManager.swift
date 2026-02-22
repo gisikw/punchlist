@@ -12,7 +12,7 @@ final class WebSocketManager {
     private var onItems: (([Item]) -> Void)?
     private var connectCount = 0
 
-    init(url: URL = URL(string: "wss://PUNCH_API_HOST_REDACTED/ws")!) {
+    init(url: URL = URL(string: "wss://punch.gisi.network/ws")!) {
         self.url = url
     }
 

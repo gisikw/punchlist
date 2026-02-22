@@ -1,3 +1,5 @@
+set dotenv-load
+
 project := "Punchlist.xcodeproj"
 scheme := "Punchlist"
 app_name := "Punchlist"
@@ -5,20 +7,19 @@ remote_dir := "~/Projects/punchlist"
 simulator := "iPhone 17 Pro"
 archive_path := "~/Punchlist.xcarchive"
 export_path := "~/PunchlistExport"
-dist_dir := "/var/lib/apple-dist/ipas"
-dist_url := "https://DIST_HOST_REDACTED/ipas"
 
-# Load credentials from .deploy-credentials
-export BUILD_HOST := `grep BUILD_HOST .deploy-credentials | cut -d= -f2`
-export BUILD_USER := `grep BUILD_USER .deploy-credentials | cut -d= -f2`
-export BUILD_PASS := `grep BUILD_PASS .deploy-credentials | cut -d= -f2`
-export TEAM_ID := `grep TEAM_ID .deploy-credentials | cut -d= -f2`
-export BUNDLE_ID := `grep BUNDLE_ID .deploy-credentials | cut -d= -f2`
+# List available recipes
+default:
+    @just --list
 
-# Sync source to obrien
+# Run the test suite
+test:
+    echo "no tests configured — builds are validated via xcodebuild on the build host"
+
+# Sync source to build host
 sync:
     #!/usr/bin/env bash
-    nix-shell -p sshpass rsync --run "sshpass -p '$BUILD_PASS' rsync -avz --exclude='.git' --exclude='.tickets' --exclude='.deploy-credentials' . $BUILD_USER@$BUILD_HOST:{{remote_dir}}/"
+    nix-shell -p sshpass rsync --run "sshpass -p '$BUILD_PASS' rsync -avz --exclude='.git' --exclude='.tickets' --exclude='.env' . $BUILD_USER@$BUILD_HOST:{{remote_dir}}/"
 
 # Build for iOS simulator
 build: sync
@@ -37,7 +38,7 @@ archive: sync
     #!/usr/bin/env bash
     set -euo pipefail
 
-    # Generate ExportOptions.plist locally, then push to obrien
+    # Generate ExportOptions.plist locally, then push to build host
     TMPDIR=$(mktemp -d)
     trap "rm -rf $TMPDIR" EXIT
     cat > "$TMPDIR/ExportOptions.plist" <<EOF
@@ -53,7 +54,7 @@ archive: sync
       <string>manual</string>
       <key>provisioningProfiles</key>
       <dict>
-        <key>BUNDLE_ID_REDACTED</key>
+        <key>$BUNDLE_ID</key>
         <string>Punchlist Ad Hoc</string>
       </dict>
       <key>signingCertificate</key>
@@ -93,7 +94,7 @@ archive: sync
          -exportPath {{export_path}} \
          2>&1 | tail -20'"
 
-# Distribute IPA to DIST_HOST_REDACTED
+# Distribute IPA to ad-hoc server
 distribute: archive
     #!/usr/bin/env bash
     set -euo pipefail
@@ -101,7 +102,7 @@ distribute: archive
     TMPDIR=$(mktemp -d)
     trap "rm -rf $TMPDIR" EXIT
 
-    # Pull IPA from obrien
+    # Pull IPA from build host
     nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' scp -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST:{{export_path}}/{{app_name}}.ipa $TMPDIR/{{app_name}}.ipa"
 
     # Generate manifest plist
@@ -119,7 +120,7 @@ distribute: archive
               <key>kind</key>
               <string>software-package</string>
               <key>url</key>
-              <string>{{dist_url}}/{{app_name}}.ipa</string>
+              <string>$DIST_URL/{{app_name}}.ipa</string>
             </dict>
           </array>
           <key>metadata</key>
@@ -140,20 +141,20 @@ distribute: archive
     EOF
 
     # Copy to distribution directory
-    cp "$TMPDIR/{{app_name}}.ipa" {{dist_dir}}/{{app_name}}.ipa
-    cp "$TMPDIR/{{app_name}}.plist" {{dist_dir}}/{{app_name}}.plist
-    chmod 644 {{dist_dir}}/{{app_name}}.ipa {{dist_dir}}/{{app_name}}.plist
+    cp "$TMPDIR/{{app_name}}.ipa" $DIST_DIR/{{app_name}}.ipa
+    cp "$TMPDIR/{{app_name}}.plist" $DIST_DIR/{{app_name}}.plist
+    chmod 644 $DIST_DIR/{{app_name}}.ipa $DIST_DIR/{{app_name}}.plist
 
     echo ""
     echo "Distributed! Install from:"
-    echo "  https://DIST_HOST_REDACTED"
+    echo "  $DIST_URL"
 
 # Open install page in browser
 install:
-    @echo "https://DIST_HOST_REDACTED"
+    @echo "$DIST_URL"
     @echo "Open on your iOS device to install."
 
-# Clean build artifacts on obrien
+# Clean build artifacts on build host
 clean:
     #!/usr/bin/env bash
     nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \

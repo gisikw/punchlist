@@ -13,9 +13,9 @@ DerivedData/
 !default.perspectivev3
 xcuserdata/
 
-# Deploy / credentials
+# Credentials
+.env
 .deploy-credentials
-# obrien SSH: admin@BUILD_HOST_REDACTED / BUILD_PASS_REDACTED
 
 # macOS
 .DS_Store

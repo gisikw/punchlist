@@ -4,8 +4,8 @@ Explicit contracts for Punchlist iOS. If a convention matters, it's here.
 
 ## Architecture
 
-- **API client only** — no local data persistence. The Go backend at
-  `PUNCH_API_HOST_REDACTED` is the single source of truth.
+- **API client only** — no local data persistence. The Go backend is the
+  single source of truth. Base URL is configured via environment/build settings.
 - **WebSocket for state** — the server pushes the full item array on every
   change. The client replaces its entire model on each message. No diffing,
   no merge logic.
@@ -68,9 +68,9 @@ optimistic offline items use temporary IDs that get replaced on sync.
 
 ## Build
 
-- **Primary development on ratched** (dev sandbox).
-- **Xcode builds on obrien** via SSH. Source is rsynced, not committed from
-  obrien.
+- **Cross-machine build** — source is edited on the dev sandbox and rsynced
+  to a macOS build host via SSH. Xcode builds happen on the build host.
+  Credentials are in `.env` (gitignored).
 - **No CI/CD yet** — manual builds. If this changes, document it here.
 
 ## Policy
