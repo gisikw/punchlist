@@ -11,6 +11,7 @@ final class WebSocketManager {
     private var offlineTimer: Task<Void, Never>?
     private var onItems: (([Item]) -> Void)?
     private var connectCount = 0
+    private var currentProjectSlug: String?
 
     init(url: URL = URL(string: "wss://punch.gisi.network/ws")!) {
         self.url = url
@@ -29,7 +30,17 @@ final class WebSocketManager {
         log("stop")
     }
 
+    func reconnect() {
+        log("reconnect (foreground)")
+        task?.cancel(with: .goingAway, reason: nil)
+        task = nil
+        offlineTimer?.cancel()
+        isConnected = false
+        connect()
+    }
+
     func switchProject(_ slug: String) {
+        currentProjectSlug = slug == "personal" ? nil : slug
         guard let task else { return }
         let msg = "{\"project\":\"\(slug)\"}"
         log("switch → \(slug)")
@@ -65,6 +76,10 @@ final class WebSocketManager {
                         self.isConnected = true
                         self.reconnectDelay = 1.0
                     }
+                    // Re-subscribe to the current project after reconnect.
+                    if let slug = self.currentProjectSlug {
+                        self.switchProject(slug)
+                    }
                 }
                 self.handleMessage(message)
                 self.receiveLoop(attempt: attempt)
@@ -73,6 +88,11 @@ final class WebSocketManager {
                 self.handleDisconnect()
             }
         }
+    }
+
+    private struct WSEnvelope: Codable {
+        let project: String
+        let items: [Item]
     }
 
     private func handleMessage(_ message: URLSessionWebSocketTask.Message) {
@@ -86,12 +106,21 @@ final class WebSocketManager {
             return
         }
 
-        guard let items = try? JSONDecoder().decode([Item].self, from: data) else {
+        guard let envelope = try? JSONDecoder().decode(WSEnvelope.self, from: data) else {
             log("decode fail")
             return
         }
+
+        // Drop messages for a project we're not viewing.
+        // personal slug on the server is "personal"; currentProjectSlug is nil for personal.
+        let expectedSlug = currentProjectSlug ?? "personal"
+        guard envelope.project == expectedSlug else {
+            log("drop \(envelope.project) (viewing \(expectedSlug))")
+            return
+        }
+
         DispatchQueue.main.async { [weak self] in
-            self?.onItems?(items)
+            self?.onItems?(envelope.items)
         }
     }
 

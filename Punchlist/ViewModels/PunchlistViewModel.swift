@@ -16,6 +16,7 @@ final class PunchlistViewModel {
     }
 
     var isPersonal: Bool { currentProjectSlug == "personal" }
+    var agentState: PunchlistAPI.AgentState?
 
     /// The slug used for API calls. nil means the server default (personal list).
     var currentSlug: String? {
@@ -25,12 +26,14 @@ final class PunchlistViewModel {
     private let api = PunchlistAPI()
     private let webSocket = WebSocketManager()
     private var pendingQueue: [() async -> Void] = []
+    private var agentPollTask: Task<Void, Never>?
 
     func start() {
         webSocket.start { [weak self] items in
             guard let self else { return }
             self.items = items
             self.drainQueue()
+            self.refreshAgentStatus()
         }
 
         Task {
@@ -52,13 +55,26 @@ final class PunchlistViewModel {
         switchToProject(slug: "personal")
     }
 
+    func refresh() {
+        webSocket.reconnect()
+        let apiSlug = currentSlug
+        Task {
+            if let fetched = try? await api.fetchItems(project: apiSlug) {
+                self.items = fetched
+            }
+        }
+        refreshAgentStatus()
+    }
+
     func stop() {
         webSocket.stop()
+        agentPollTask?.cancel()
     }
 
     func switchToProject(slug: String) {
         guard slug != currentProjectSlug else { return }
         currentProjectSlug = slug
+        agentState = nil
 
         // Tell the server to switch WS broadcast
         webSocket.switchProject(slug)
@@ -70,6 +86,9 @@ final class PunchlistViewModel {
                 self.items = fetched
             }
         }
+
+        // Fetch agent status and start polling for non-personal projects
+        startAgentPolling()
     }
 
     // MARK: - Actions
@@ -146,6 +165,48 @@ final class PunchlistViewModel {
         } else {
             items.removeAll { $0.id == item.id }
             pendingQueue.append(action)
+        }
+    }
+
+    // MARK: - Agent
+
+    func toggleAgent() {
+        guard let slug = currentSlug, let state = agentState else { return }
+        Task {
+            switch state {
+            case .running:
+                if let newState = try? await api.agentStop(project: slug) {
+                    self.agentState = newState
+                }
+            case .notRunning:
+                if let newState = try? await api.agentStart(project: slug) {
+                    self.agentState = newState
+                }
+            case .notProvisioned:
+                break
+            }
+        }
+    }
+
+    func refreshAgentStatus() {
+        guard let slug = currentSlug else { return }
+        Task {
+            if let state = try? await api.agentStatus(project: slug) {
+                self.agentState = state
+            }
+        }
+    }
+
+    private func startAgentPolling() {
+        agentPollTask?.cancel()
+        guard !isPersonal else { return }
+        refreshAgentStatus()
+        agentPollTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(30))
+                guard !Task.isCancelled else { break }
+                self?.refreshAgentStatus()
+            }
         }
     }
 

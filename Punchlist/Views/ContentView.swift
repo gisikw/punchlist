@@ -43,8 +43,8 @@ struct ContentView: View {
         .onDisappear { viewModel.stop() }
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
-                viewModel.resetToPersonal()
                 showProjectPicker = false
+                viewModel.refresh()
             }
         }
     }
@@ -74,30 +74,56 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        HStack {
-            Text("punchlist")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(Color.punchGray)
-                .tracking(0.5)
-            Spacer()
-            Text(projectTag ?? "")
-                .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(Color.punchGray)
-                .tracking(0.5)
-                .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    if showProjectPicker {
-                        dismissPicker()
-                    } else {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                            showProjectPicker = true
+        ZStack {
+            HStack {
+                Text("punchlist")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.punchGray)
+                    .tracking(0.5)
+                Spacer()
+                Text(projectTag ?? "")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.punchGray)
+                    .tracking(0.5)
+                    .frame(minWidth: 44, minHeight: 44, alignment: .trailing)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if showProjectPicker {
+                            dismissPicker()
+                        } else {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                showProjectPicker = true
+                            }
                         }
                     }
-                }
+            }
+
+            if let agentState = viewModel.agentState,
+               agentState != .notProvisioned,
+               !viewModel.isPersonal {
+                agentToggle(isRunning: agentState == .running)
+            }
         }
         .padding(.horizontal, 20)
         .padding(.top, 4)
+    }
+
+    private func agentToggle(isRunning: Bool) -> some View {
+        Button {
+            viewModel.toggleAgent()
+        } label: {
+            Capsule()
+                .fill(isRunning ? Color.punchBlue : Color.punchGray.opacity(0.3))
+                .frame(width: 40, height: 22)
+                .overlay(alignment: isRunning ? .trailing : .leading) {
+                    Circle()
+                        .fill(.white)
+                        .frame(width: 18, height: 18)
+                        .padding(2)
+                        .shadow(color: .black.opacity(0.1), radius: 1, y: 1)
+                }
+                .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isRunning)
+        }
     }
 
     private var projectTag: String? {

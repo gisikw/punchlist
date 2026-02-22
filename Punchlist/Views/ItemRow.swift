@@ -6,6 +6,30 @@ struct ItemRow: View {
     let onToggle: () -> Void
     let onBump: () -> Void
 
+    @State private var pulseActive = false
+
+    private var isInProgress: Bool {
+        item.status == "in_progress"
+    }
+
+    private var isBlocked: Bool {
+        item.status == "blocked"
+    }
+
+    private var hasPulse: Bool {
+        isInProgress
+    }
+
+    private var hasActiveStatus: Bool {
+        isInProgress || isBlocked
+    }
+
+    private var accentColor: Color {
+        if isBlocked { return .punchPink }
+        if isInProgress { return .punchBlue }
+        return .clear
+    }
+
     var body: some View {
         HStack(alignment: .center, spacing: 0) {
             HStack(spacing: 14) {
@@ -26,8 +50,29 @@ struct ItemRow: View {
         .padding(.vertical, 14)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
-        .shadow(color: .black.opacity(0.08), radius: 1.5, y: 1)
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(accentColor.opacity(hasActiveStatus ? 0.3 : 0), lineWidth: 1)
+        )
+        .shadow(color: hasActiveStatus ? accentColor.opacity(hasPulse ? (pulseActive ? 0.18 : 0.06) : 0.12) : .black.opacity(0.08),
+                radius: hasActiveStatus ? (hasPulse ? (pulseActive ? 8 : 4) : 6) : 1.5, y: hasActiveStatus ? 0 : 1)
         .contentShape(Rectangle())
+        .onAppear {
+            if hasPulse {
+                withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+                    pulseActive = true
+                }
+            }
+        }
+        .onChange(of: hasPulse) { _, newValue in
+            if newValue {
+                withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
+                    pulseActive = true
+                }
+            } else {
+                pulseActive = false
+            }
+        }
         .overlay {
             if isPersonal {
                 // Personal: left 80% toggles, right 20% bumps
@@ -64,10 +109,23 @@ struct ItemRow: View {
         }
     }
 
+    private var circleColor: Color {
+        if item.done { return .punchGreen }
+        if isBlocked { return .punchPink }
+        if isInProgress { return .punchBlue }
+        return .punchGray
+    }
+
     private var circle: some View {
         ZStack {
+            if hasActiveStatus {
+                Circle()
+                    .fill(accentColor.opacity(hasPulse ? (pulseActive ? 0.25 : 0.1) : 0.18))
+                    .frame(width: 30, height: 30)
+            }
+
             Circle()
-                .strokeBorder(item.done ? Color.punchGreen : Color.punchGray, lineWidth: 2)
+                .strokeBorder(circleColor, lineWidth: 2)
                 .frame(width: 22, height: 22)
 
             if item.done {
@@ -98,4 +156,5 @@ extension Color {
     static let punchGray = Color(red: 0.576, green: 0.573, blue: 0.576)    // #939293
     static let punchGreen = Color(red: 0.663, green: 0.863, blue: 0.463)   // #A9DC76
     static let punchBlue = Color(red: 0.471, green: 0.863, blue: 0.91)     // #78DCE8
+    static let punchPink = Color(red: 1.0, green: 0.38, blue: 0.533)      // #FF6188
 }
