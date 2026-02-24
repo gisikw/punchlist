@@ -177,6 +177,11 @@ struct ContentView: View {
                                 withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                                     expandedItemID = item.id
                                 }
+                            },
+                            onCollapse: {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                    expandedItemID = nil
+                                }
                             }
                         )
                         .id(item.id)

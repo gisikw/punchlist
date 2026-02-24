@@ -7,10 +7,13 @@ struct ItemRow: View {
     let onToggle: () -> Void
     let onBump: () -> Void
     let onExpand: () -> Void
+    let onCollapse: () -> Void
 
     @State private var pulseActive = false
     @State private var holdProgress: CGFloat = 0
     @State private var isHolding = false
+    @State private var holdStartTime: Date?
+    @State private var holdDelayTask: Task<Void, Never>?
 
     private var isInProgress: Bool {
         item.status == "in_progress"
@@ -59,7 +62,7 @@ struct ItemRow: View {
             // Hold-to-close bar sits outside the tap overlay so its gesture isn't blocked
             if isExpanded && !item.done {
                 holdToCloseBar
-                    .padding(.top, 4)
+                    .padding(.top, 10)
             }
         }
         .padding(.horizontal, 12)
@@ -165,30 +168,46 @@ struct ItemRow: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 4))
             .gesture(
-                LongPressGesture(minimumDuration: 1.5)
+                DragGesture(minimumDistance: 0)
                     .onChanged { _ in
                         guard !isHolding else { return }
                         isHolding = true
-                        withAnimation(.linear(duration: 1.5)) {
-                            holdProgress = 1.0
+                        holdStartTime = Date()
+                        // Wait 0.2s grace period, then start the fill animation
+                        holdDelayTask = Task { @MainActor in
+                            try? await Task.sleep(for: .milliseconds(200))
+                            guard !Task.isCancelled, isHolding else { return }
+                            withAnimation(.linear(duration: 1.3)) {
+                                holdProgress = 1.0
+                            }
+                            // After 1.3s animation completes, close the item
+                            try? await Task.sleep(for: .milliseconds(1300))
+                            guard !Task.isCancelled, isHolding else { return }
+                            isHolding = false
+                            holdProgress = 0
+                            holdStartTime = nil
+                            onToggle()
                         }
                     }
                     .onEnded { _ in
+                        guard isHolding else { return }
+                        let elapsed = Date().timeIntervalSince(holdStartTime ?? Date())
+                        holdDelayTask?.cancel()
+                        holdDelayTask = nil
                         isHolding = false
-                        holdProgress = 0
-                        onToggle()
-                    }
-                    .simultaneously(with: DragGesture(minimumDistance: 0)
-                        .onEnded { _ in
-                            // Finger lifted before long press completed
-                            if isHolding {
-                                isHolding = false
-                                withAnimation(.easeOut(duration: 0.2)) {
-                                    holdProgress = 0
-                                }
+                        holdStartTime = nil
+
+                        if elapsed < 0.2 {
+                            // Quick tap — collapse the card
+                            holdProgress = 0
+                            onCollapse()
+                        } else {
+                            // Released mid-hold — cancel fill
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                holdProgress = 0
                             }
                         }
-                    )
+                    }
             )
         }
         .frame(height: 28)
