@@ -1,6 +1,6 @@
 ---
 id: pun-f4a1
-status: open
+status: in_progress
 deps: [pun-658f]
 created: 2026-02-24T14:59:15Z
 type: task

@@ -1,8 +1,7 @@
 ---
 id: pun-6db3
-status: open
+status: closed
 deps: []
-links: []
 created: 2026-02-20T14:52:18Z
 type: task
 priority: 2
