@@ -46,9 +46,20 @@ struct ItemRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            headerRow
-            if isExpanded {
-                expandedBody
+            // Tappable region: header + expanded text (ticket ID, description)
+            VStack(alignment: .leading, spacing: 0) {
+                headerRow
+                if isExpanded {
+                    expandedText
+                }
+            }
+            .contentShape(Rectangle())
+            .overlay { tapOverlay }
+
+            // Hold-to-close bar sits outside the tap overlay so its gesture isn't blocked
+            if isExpanded && !item.done {
+                holdToCloseBar
+                    .padding(.top, 4)
             }
         }
         .padding(.horizontal, 12)
@@ -87,7 +98,7 @@ struct ItemRow: View {
                 text
             }
 
-            Spacer(minLength: 0)
+            Spacer(minLength: 8)
 
             if !item.done {
                 Image(systemName: "chevron.down")
@@ -96,51 +107,32 @@ struct ItemRow: View {
                     .padding(.trailing, 8)
             }
         }
-        .contentShape(Rectangle())
-        .overlay {
-            if isPersonal {
-                if !item.done {
-                    GeometryReader { geo in
-                        HStack(spacing: 0) {
-                            Color.clear
-                                .contentShape(Rectangle())
-                                .onTapGesture { onToggle() }
+    }
 
-                            Color.clear
-                                .frame(width: geo.size.width * 0.2)
-                                .contentShape(Rectangle())
-                                .onTapGesture { onBump() }
-                        }
-                    }
-                } else {
-                    Color.clear
-                        .contentShape(Rectangle())
-                        .onTapGesture { onToggle() }
-                }
+    /// The 80/20 tap overlay: left for primary action, right for bump.
+    /// Covers the tappable region of the card (header + expanded text, but not the hold-to-close bar).
+    private var tapOverlay: some View {
+        GeometryReader { geo in
+            if item.done {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { onToggle() }
             } else {
-                if !item.done {
-                    GeometryReader { geo in
-                        HStack(spacing: 0) {
-                            Color.clear
-                                .contentShape(Rectangle())
-                                .onTapGesture { onExpand() }
-
-                            Color.clear
-                                .frame(width: geo.size.width * 0.2)
-                                .contentShape(Rectangle())
-                                .onTapGesture { onBump() }
-                        }
-                    }
-                } else {
+                HStack(spacing: 0) {
                     Color.clear
                         .contentShape(Rectangle())
-                        .onTapGesture { onToggle() }
+                        .onTapGesture { isPersonal ? onToggle() : onExpand() }
+
+                    Color.clear
+                        .frame(width: geo.size.width * 0.2)
+                        .contentShape(Rectangle())
+                        .onTapGesture { onBump() }
                 }
             }
         }
     }
 
-    private var expandedBody: some View {
+    private var expandedText: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(item.id)
                 .font(.system(size: 11, weight: .medium, design: .monospaced))
@@ -157,11 +149,6 @@ struct ItemRow: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.leading, 44)
             }
-
-            if !item.done {
-                holdToCloseBar
-                    .padding(.top, 4)
-            }
         }
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
@@ -175,14 +162,6 @@ struct ItemRow: View {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color.punchGreen.opacity(0.35))
                     .frame(width: geo.size.width * holdProgress)
-
-                HStack {
-                    Spacer()
-                    Text(holdProgress > 0 ? "closing..." : "hold to close")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(holdProgress > 0.5 ? Color.punchText.opacity(0.6) : Color.punchGray.opacity(0.5))
-                    Spacer()
-                }
             }
             .clipShape(RoundedRectangle(cornerRadius: 4))
             .gesture(

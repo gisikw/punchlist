@@ -6,8 +6,12 @@ final class PunchlistViewModel {
     var projects: [Project] = []
     var currentProjectSlug: String = "user"
     var isConnected: Bool { webSocket.isConnected }
-    /// Only show offline UI when WS is down AND polling isn't covering.
-    var showOffline: Bool { !isConnected && pollTask == nil }
+    /// Only show offline UI when WS is down AND polling isn't covering
+    /// AND we've been running long enough to rule out cold-start latency.
+    var showOffline: Bool {
+        !isConnected && pollTask == nil &&
+        Date().timeIntervalSince(startDate) > 3
+    }
     var debugLog: [String] { webSocket.debugLog }
 
     var currentProject: Project? {
@@ -22,6 +26,7 @@ final class PunchlistViewModel {
 
     private let api = PunchlistAPI()
     private let webSocket = WebSocketManager()
+    private var startDate: Date = .distantPast
     private var pendingQueue: [() async -> Void] = []
     private var agentPollTask: Task<Void, Never>?
     private var pollTask: Task<Void, Never>?
@@ -29,6 +34,7 @@ final class PunchlistViewModel {
     private var connectionObserver: Task<Void, Never>?
 
     func start() {
+        startDate = Date()
         webSocket.start { [weak self] items in
             guard let self else { return }
             self.items = items

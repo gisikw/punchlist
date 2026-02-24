@@ -1,6 +1,6 @@
 ---
 id: pun-b60a
-status: open
+status: closed
 deps: []
 created: 2026-02-24T20:17:54Z
 type: task
