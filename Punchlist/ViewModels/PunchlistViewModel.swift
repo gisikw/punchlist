@@ -6,6 +6,8 @@ final class PunchlistViewModel {
     var projects: [Project] = []
     var currentProjectSlug: String = "user"
     var isConnected: Bool { webSocket.isConnected }
+    /// Only show offline UI when WS is down AND polling isn't covering.
+    var showOffline: Bool { !isConnected && pollTask == nil }
     var debugLog: [String] { webSocket.debugLog }
 
     var currentProject: Project? {
@@ -22,14 +24,23 @@ final class PunchlistViewModel {
     private let webSocket = WebSocketManager()
     private var pendingQueue: [() async -> Void] = []
     private var agentPollTask: Task<Void, Never>?
+    private var pollTask: Task<Void, Never>?
+    private var pollBurstUntil: Date = .distantPast
+    private var connectionObserver: Task<Void, Never>?
 
     func start() {
         webSocket.start { [weak self] items in
             guard let self else { return }
             self.items = items
+            self.stopPolling()
             self.drainQueue()
             self.refreshAgentStatus()
         }
+
+        // Start polling fallback — it will self-suspend once WS connects.
+        // Also observe connection changes to restart polling on disconnect.
+        startPollingIfNeeded()
+        observeConnection()
 
         Task {
             // Fetch project list, user (personal) first then alphabetical
@@ -67,6 +78,8 @@ final class PunchlistViewModel {
 
     func stop() {
         webSocket.stop()
+        stopPolling()
+        connectionObserver?.cancel()
         agentPollTask?.cancel()
     }
 
@@ -112,6 +125,7 @@ final class PunchlistViewModel {
             items.insert(temp, at: 0)
             pendingQueue.append(action)
         }
+        afterAction()
     }
 
     func toggleItem(_ item: Item) {
@@ -134,6 +148,7 @@ final class PunchlistViewModel {
             }
             pendingQueue.append(action)
         }
+        afterAction()
     }
 
     func bumpItem(_ item: Item) {
@@ -150,6 +165,7 @@ final class PunchlistViewModel {
             items.insert(bumped, at: 0)
             pendingQueue.append(action)
         }
+        afterAction()
     }
 
     func deleteItem(_ item: Item) {
@@ -164,6 +180,13 @@ final class PunchlistViewModel {
             items.removeAll { $0.id == item.id }
             pendingQueue.append(action)
         }
+        afterAction()
+    }
+
+    /// After any mutation, burst-poll if WS is down so the UI stays fresh.
+    private func afterAction() {
+        guard !isConnected else { return }
+        pollBurst()
     }
 
     // MARK: - Agent
@@ -208,6 +231,58 @@ final class PunchlistViewModel {
                 self?.refreshAgentStatus()
             }
         }
+    }
+
+    // MARK: - Connection observation
+
+    private func observeConnection() {
+        connectionObserver?.cancel()
+        connectionObserver = Task { [weak self] in
+            var wasConnected = true
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(2))
+                guard !Task.isCancelled, let self else { break }
+                let connected = self.isConnected
+                if wasConnected && !connected {
+                    // WS just went down — start polling
+                    self.startPollingIfNeeded()
+                }
+                wasConnected = connected
+            }
+        }
+    }
+
+    // MARK: - Polling fallback
+
+    /// Kick the poll loop into burst mode (1s interval for 10s).
+    private func pollBurst() {
+        pollBurstUntil = Date().addingTimeInterval(10)
+        startPollingIfNeeded()
+    }
+
+    private func startPollingIfNeeded() {
+        guard pollTask == nil else { return }
+        pollTask = Task { [weak self] in
+            while !Task.isCancelled {
+                guard let s = self else { break }
+                // Stop polling when WS is healthy
+                if s.isConnected { break }
+                let interval: TimeInterval = Date() < s.pollBurstUntil ? 1.0 : 5.0
+                try? await Task.sleep(for: .seconds(interval))
+                guard !Task.isCancelled, let s = self else { break }
+                if s.isConnected { break }
+                let slug = s.apiSlug
+                if let fetched = try? await s.api.fetchItems(project: slug) {
+                    s.items = fetched
+                }
+            }
+            self?.pollTask = nil
+        }
+    }
+
+    private func stopPolling() {
+        pollTask?.cancel()
+        pollTask = nil
     }
 
     // MARK: - Queue

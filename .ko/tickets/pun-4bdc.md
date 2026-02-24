@@ -1,8 +1,7 @@
 ---
 id: pun-4bdc
-status: open
+status: closed
 deps: []
-links: []
 created: 2026-02-18T19:07:33Z
 type: task
 priority: 2

@@ -1,8 +1,7 @@
 ---
 id: pun-318a
-status: open
+status: closed
 deps: []
-links: []
 created: 2026-02-20T14:52:18Z
 type: task
 priority: 2

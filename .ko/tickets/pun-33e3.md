@@ -1,6 +1,6 @@
 ---
 id: pun-33e3
-status: open
+status: closed
 deps: []
 created: 2026-02-18T19:07:29Z
 type: task

@@ -6,9 +6,11 @@ struct ItemRow: View {
     let isExpanded: Bool
     let onToggle: () -> Void
     let onBump: () -> Void
-    let onCircleTap: () -> Void
+    let onExpand: () -> Void
 
     @State private var pulseActive = false
+    @State private var holdProgress: CGFloat = 0
+    @State private var isHolding = false
 
     private var isInProgress: Bool {
         item.status == "in_progress"
@@ -44,33 +46,9 @@ struct ItemRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center, spacing: 0) {
-                HStack(spacing: 14) {
-                    circle
-                    text
-                }
-
-                Spacer(minLength: 0)
-
-                if !item.done {
-                    Image(systemName: "chevron.down")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(Color(red: 0.87, green: 0.87, blue: 0.87)) // #DDDDDD
-                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
-                        .padding(.trailing, 8)
-                }
-            }
-
-            if isExpanded, let desc = item.description, !desc.isEmpty {
-                Text(desc)
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color.punchGray)
-                    .lineLimit(nil)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 8)
-                    .padding(.leading, 44) // align with text (circle 30 + spacing 14)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+            headerRow
+            if isExpanded {
+                expandedBody
             }
         }
         .padding(.horizontal, 12)
@@ -84,7 +62,6 @@ struct ItemRow: View {
         )
         .shadow(color: hasActiveStatus ? accentColor.opacity(hasPulse ? (pulseActive ? 0.18 : 0.06) : 0.12) : .black.opacity(0.08),
                 radius: hasActiveStatus ? (hasPulse ? (pulseActive ? 8 : 4) : 6) : 1.5, y: hasActiveStatus ? 0 : 1)
-        .contentShape(Rectangle())
         .onAppear {
             if hasPulse {
                 withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
@@ -101,9 +78,27 @@ struct ItemRow: View {
                 pulseActive = false
             }
         }
+    }
+
+    private var headerRow: some View {
+        HStack(alignment: .center, spacing: 0) {
+            HStack(spacing: 14) {
+                circle
+                text
+            }
+
+            Spacer(minLength: 0)
+
+            if !item.done {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(Color(red: 0.87, green: 0.87, blue: 0.87)) // #DDDDDD
+                    .padding(.trailing, 8)
+            }
+        }
+        .contentShape(Rectangle())
         .overlay {
             if isPersonal {
-                // Personal: left 80% toggles, right 20% bumps
                 if !item.done {
                     GeometryReader { geo in
                         HStack(spacing: 0) {
@@ -123,13 +118,12 @@ struct ItemRow: View {
                         .onTapGesture { onToggle() }
                 }
             } else {
-                // Project: left 80% expands (circle tap), right 20% bumps
                 if !item.done {
                     GeometryReader { geo in
                         HStack(spacing: 0) {
                             Color.clear
                                 .contentShape(Rectangle())
-                                .onTapGesture { onCircleTap() }
+                                .onTapGesture { onExpand() }
 
                             Color.clear
                                 .frame(width: geo.size.width * 0.2)
@@ -144,6 +138,81 @@ struct ItemRow: View {
                 }
             }
         }
+    }
+
+    private var expandedBody: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(item.id)
+                .font(.system(size: 11, weight: .medium, design: .monospaced))
+                .foregroundStyle(Color.punchGray.opacity(0.6))
+                .padding(.top, 8)
+                .padding(.leading, 44)
+
+            if let desc = item.description, !desc.isEmpty {
+                Text(desc)
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color.punchGray)
+                    .lineLimit(nil)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.leading, 44)
+            }
+
+            if !item.done {
+                holdToCloseBar
+                    .padding(.top, 4)
+            }
+        }
+        .transition(.opacity.combined(with: .move(edge: .top)))
+    }
+
+    private var holdToCloseBar: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.punchGray.opacity(0.08))
+
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color.punchGreen.opacity(0.35))
+                    .frame(width: geo.size.width * holdProgress)
+
+                HStack {
+                    Spacer()
+                    Text(holdProgress > 0 ? "closing..." : "hold to close")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(holdProgress > 0.5 ? Color.punchText.opacity(0.6) : Color.punchGray.opacity(0.5))
+                    Spacer()
+                }
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .gesture(
+                LongPressGesture(minimumDuration: 1.5)
+                    .onChanged { _ in
+                        guard !isHolding else { return }
+                        isHolding = true
+                        withAnimation(.linear(duration: 1.5)) {
+                            holdProgress = 1.0
+                        }
+                    }
+                    .onEnded { _ in
+                        isHolding = false
+                        holdProgress = 0
+                        onToggle()
+                    }
+                    .simultaneously(with: DragGesture(minimumDistance: 0)
+                        .onEnded { _ in
+                            // Finger lifted before long press completed
+                            if isHolding {
+                                isHolding = false
+                                withAnimation(.easeOut(duration: 0.2)) {
+                                    holdProgress = 0
+                                }
+                            }
+                        }
+                    )
+            )
+        }
+        .frame(height: 28)
     }
 
     private var circleColor: Color {

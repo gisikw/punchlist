@@ -173,9 +173,9 @@ struct ContentView: View {
                             isExpanded: expandedItemID == item.id,
                             onToggle: { viewModel.toggleItem(item) },
                             onBump: { viewModel.bumpItem(item) },
-                            onCircleTap: {
+                            onExpand: {
                                 withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                                    expandedItemID = expandedItemID == item.id ? nil : item.id
+                                    expandedItemID = item.id
                                 }
                             }
                         )
@@ -192,7 +192,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private var offlineNotice: some View {
-        if !viewModel.isConnected {
+        if viewModel.showOffline {
             Text("offline \u{2014} will sync when reconnected")
                 .font(.system(size: 12))
                 .foregroundStyle(Color.punchGray)
