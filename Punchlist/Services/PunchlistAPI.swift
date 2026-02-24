@@ -17,13 +17,13 @@ struct PunchlistAPI {
 
     // MARK: - Items (project-scoped)
 
-    func fetchItems(project: String?) async throws -> [Item] {
+    func fetchItems(project: String) async throws -> [Item] {
         let url = itemsURL(project: project)
         let (data, _) = try await URLSession.shared.data(from: url)
         return try JSONDecoder().decode([Item].self, from: data)
     }
 
-    func addItem(project: String?, text: String) async throws {
+    func addItem(project: String, text: String) async throws {
         let url = itemsURL(project: project)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -32,21 +32,21 @@ struct PunchlistAPI {
         let _ = try await URLSession.shared.data(for: request)
     }
 
-    func toggleItem(project: String?, id: String) async throws {
+    func toggleItem(project: String, id: String) async throws {
         let url = itemURL(project: project, id: id)
         var request = URLRequest(url: url)
         request.httpMethod = "PATCH"
         let _ = try await URLSession.shared.data(for: request)
     }
 
-    func bumpItem(project: String?, id: String) async throws {
+    func bumpItem(project: String, id: String) async throws {
         let url = itemURL(project: project, id: id).appendingPathComponent("bump")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         let _ = try await URLSession.shared.data(for: request)
     }
 
-    func deleteItem(project: String?, id: String) async throws {
+    func deleteItem(project: String, id: String) async throws {
         let url = itemURL(project: project, id: id)
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -89,17 +89,11 @@ struct PunchlistAPI {
 
     // MARK: - URL helpers
 
-    private func itemsURL(project: String?) -> URL {
-        if let project {
-            return baseURL.appendingPathComponent("api/projects/\(project)/items")
-        }
-        return baseURL.appendingPathComponent("api/items")
+    private func itemsURL(project: String) -> URL {
+        baseURL.appendingPathComponent("api/projects/\(project)/items")
     }
 
-    private func itemURL(project: String?, id: String) -> URL {
-        if let project {
-            return baseURL.appendingPathComponent("api/projects/\(project)/items/\(id)")
-        }
-        return baseURL.appendingPathComponent("api/items/\(id)")
+    private func itemURL(project: String, id: String) -> URL {
+        baseURL.appendingPathComponent("api/projects/\(project)/items/\(id)")
     }
 }

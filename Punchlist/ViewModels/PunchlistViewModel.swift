@@ -4,24 +4,19 @@ import Foundation
 final class PunchlistViewModel {
     var items: [Item] = []
     var projects: [Project] = []
-    var currentProjectSlug: String = "personal"
+    var currentProjectSlug: String = "user"
     var isConnected: Bool { webSocket.isConnected }
     var debugLog: [String] { webSocket.debugLog }
 
     var currentProject: Project? {
-        if currentProjectSlug == "personal" {
-            return projects.first { $0.isDefault }
-        }
-        return projects.first { $0.slug == currentProjectSlug }
+        projects.first { $0.slug == currentProjectSlug }
     }
 
-    var isPersonal: Bool { currentProjectSlug == "personal" }
+    var isPersonal: Bool { currentProjectSlug == "user" }
     var agentState: PunchlistAPI.AgentState?
 
-    /// The slug used for API calls. nil means the server default (personal list).
-    var currentSlug: String? {
-        currentProjectSlug == "personal" ? nil : currentProjectSlug
-    }
+    /// The slug sent to the server for API calls.
+    var apiSlug: String { currentProjectSlug }
 
     private let api = PunchlistAPI()
     private let webSocket = WebSocketManager()
@@ -37,13 +32,17 @@ final class PunchlistViewModel {
         }
 
         Task {
-            // Fetch project list
+            // Fetch project list, user (personal) first then alphabetical
             if let fetched = try? await api.fetchProjects() {
-                self.projects = fetched
+                self.projects = fetched.sorted { a, b in
+                    if a.slug == "user" { return true }
+                    if b.slug == "user" { return false }
+                    return a.slug < b.slug
+                }
             }
 
-            // Fetch items for default project via REST as initial load
-            if let fetched = try? await api.fetchItems(project: nil) {
+            // Fetch items for personal (user) project via REST as initial load
+            if let fetched = try? await api.fetchItems(project: "user") {
                 self.items = fetched
             }
         }
@@ -51,15 +50,15 @@ final class PunchlistViewModel {
 
     /// Reset to personal — called on app foreground, not on WS reconnect
     func resetToPersonal() {
-        guard currentProjectSlug != "personal" else { return }
-        switchToProject(slug: "personal")
+        guard currentProjectSlug != "user" else { return }
+        switchToProject(slug: "user")
     }
 
     func refresh() {
         webSocket.reconnect()
-        let apiSlug = currentSlug
+        let slug = apiSlug
         Task {
-            if let fetched = try? await api.fetchItems(project: apiSlug) {
+            if let fetched = try? await api.fetchItems(project: slug) {
                 self.items = fetched
             }
         }
@@ -80,9 +79,8 @@ final class PunchlistViewModel {
         webSocket.switchProject(slug)
 
         // Also fetch via REST for immediate display
-        let apiSlug = slug == "personal" ? nil : slug
         Task {
-            if let fetched = try? await api.fetchItems(project: apiSlug) {
+            if let fetched = try? await api.fetchItems(project: slug) {
                 self.items = fetched
             }
         }
@@ -97,7 +95,7 @@ final class PunchlistViewModel {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        let slug = currentSlug
+        let slug = apiSlug
         let action: () async -> Void = { [api] in
             try? await api.addItem(project: slug, text: trimmed)
         }
@@ -117,7 +115,7 @@ final class PunchlistViewModel {
     }
 
     func toggleItem(_ item: Item) {
-        let slug = currentSlug
+        let slug = apiSlug
         let action: () async -> Void = { [api] in
             try? await api.toggleItem(project: slug, id: item.id)
         }
@@ -139,7 +137,7 @@ final class PunchlistViewModel {
     }
 
     func bumpItem(_ item: Item) {
-        let slug = currentSlug
+        let slug = apiSlug
         let action: () async -> Void = { [api] in
             try? await api.bumpItem(project: slug, id: item.id)
         }
@@ -155,7 +153,7 @@ final class PunchlistViewModel {
     }
 
     func deleteItem(_ item: Item) {
-        let slug = currentSlug
+        let slug = apiSlug
         let action: () async -> Void = { [api] in
             try? await api.deleteItem(project: slug, id: item.id)
         }
@@ -171,7 +169,8 @@ final class PunchlistViewModel {
     // MARK: - Agent
 
     func toggleAgent() {
-        guard let slug = currentSlug, let state = agentState else { return }
+        guard !isPersonal, let state = agentState else { return }
+        let slug = apiSlug
         Task {
             switch state {
             case .running:
@@ -189,7 +188,8 @@ final class PunchlistViewModel {
     }
 
     func refreshAgentStatus() {
-        guard let slug = currentSlug else { return }
+        guard !isPersonal else { return }
+        let slug = apiSlug
         Task {
             if let state = try? await api.agentStatus(project: slug) {
                 self.agentState = state

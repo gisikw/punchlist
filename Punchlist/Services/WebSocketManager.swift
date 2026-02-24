@@ -11,7 +11,7 @@ final class WebSocketManager {
     private var offlineTimer: Task<Void, Never>?
     private var onItems: (([Item]) -> Void)?
     private var connectCount = 0
-    private var currentProjectSlug: String?
+    private var currentProjectSlug: String = "user"
 
     init(url: URL = URL(string: "wss://punch.gisi.network/ws")!) {
         self.url = url
@@ -40,7 +40,7 @@ final class WebSocketManager {
     }
 
     func switchProject(_ slug: String) {
-        currentProjectSlug = slug == "personal" ? nil : slug
+        currentProjectSlug = slug
         guard let task else { return }
         let msg = "{\"project\":\"\(slug)\"}"
         log("switch → \(slug)")
@@ -77,9 +77,7 @@ final class WebSocketManager {
                         self.reconnectDelay = 1.0
                     }
                     // Re-subscribe to the current project after reconnect.
-                    if let slug = self.currentProjectSlug {
-                        self.switchProject(slug)
-                    }
+                    self.switchProject(self.currentProjectSlug)
                 }
                 self.handleMessage(message)
                 self.receiveLoop(attempt: attempt)
@@ -112,10 +110,8 @@ final class WebSocketManager {
         }
 
         // Drop messages for a project we're not viewing.
-        // personal slug on the server is "personal"; currentProjectSlug is nil for personal.
-        let expectedSlug = currentProjectSlug ?? "personal"
-        guard envelope.project == expectedSlug else {
-            log("drop \(envelope.project) (viewing \(expectedSlug))")
+        guard envelope.project == currentProjectSlug else {
+            log("drop \(envelope.project) (viewing \(currentProjectSlug))")
             return
         }
 

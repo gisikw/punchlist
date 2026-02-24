@@ -53,13 +53,13 @@ struct ContentView: View {
         VStack(spacing: 0) {
             ForEach(viewModel.projects) { project in
                 Button {
-                    viewModel.switchToProject(slug: project.isDefault ? "personal" : project.slug)
+                    viewModel.switchToProject(slug: project.slug)
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                         showProjectPicker = false
                     }
                 } label: {
                     HStack {
-                        Text(project.isDefault ? "personal" : "#\(project.slug)")
+                        Text(project.slug == "user" ? "personal" : "#\(project.slug)")
                             .font(.system(size: 13, weight: .medium))
                             .foregroundStyle(project.slug == (viewModel.currentProject?.slug ?? "") ? Color.punchText : Color.punchGray)
                             .tracking(0.5)
@@ -127,7 +127,8 @@ struct ContentView: View {
     }
 
     private var projectTag: String? {
-        guard let project = viewModel.currentProject, !project.isDefault else { return nil }
+        guard !viewModel.isPersonal else { return nil }
+        guard let project = viewModel.currentProject else { return nil }
         return "#\(project.slug)"
     }
 
@@ -135,7 +136,7 @@ struct ContentView: View {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             showProjectPicker = false
         }
-        viewModel.switchToProject(slug: "personal")
+        viewModel.switchToProject(slug: "user")
     }
 
     private var itemList: some View {
