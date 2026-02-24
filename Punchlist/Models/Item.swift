@@ -8,4 +8,5 @@ struct Item: Codable, Identifiable, Equatable {
     var priority: Int?
     var status: String?
     var hasUnresolvedDep: Bool?
+    var description: String?
 }

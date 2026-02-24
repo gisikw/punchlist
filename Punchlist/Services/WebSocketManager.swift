@@ -12,6 +12,7 @@ final class WebSocketManager {
     private var onItems: (([Item]) -> Void)?
     private var connectCount = 0
     private var currentProjectSlug: String = "user"
+    private var reconnectTask: Task<Void, Never>?
 
     init(url: URL = URL(string: "wss://punch.gisi.network/ws")!) {
         self.url = url
@@ -24,6 +25,8 @@ final class WebSocketManager {
     }
 
     func stop() {
+        reconnectTask?.cancel()
+        reconnectTask = nil
         task?.cancel(with: .goingAway, reason: nil)
         task = nil
         offlineTimer?.cancel()
@@ -32,6 +35,8 @@ final class WebSocketManager {
 
     func reconnect() {
         log("reconnect (foreground)")
+        reconnectTask?.cancel()
+        reconnectTask = nil
         task?.cancel(with: .goingAway, reason: nil)
         task = nil
         offlineTimer?.cancel()
@@ -132,12 +137,14 @@ final class WebSocketManager {
             }
         }
 
-        // Reconnect with exponential backoff
+        // Reconnect with exponential backoff (cancellable so reconnect() can preempt)
         let delay = reconnectDelay
         reconnectDelay = min(reconnectDelay * 2, 30)
         log("reconnect in \(delay)s")
-        Task {
+        reconnectTask?.cancel()
+        reconnectTask = Task {
             try? await Task.sleep(for: .seconds(delay))
+            guard !Task.isCancelled else { return }
             self.connect()
         }
     }

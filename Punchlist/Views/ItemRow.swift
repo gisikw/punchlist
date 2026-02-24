@@ -3,8 +3,10 @@ import SwiftUI
 struct ItemRow: View {
     let item: Item
     let isPersonal: Bool
+    let isExpanded: Bool
     let onToggle: () -> Void
     let onBump: () -> Void
+    let onCircleTap: () -> Void
 
     @State private var pulseActive = false
 
@@ -35,26 +37,47 @@ struct ItemRow: View {
         return .clear
     }
 
+    private var hasDescription: Bool {
+        guard let desc = item.description else { return false }
+        return !desc.isEmpty
+    }
+
     var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            HStack(spacing: 14) {
-                circle
-                text
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center, spacing: 0) {
+                HStack(spacing: 14) {
+                    circle
+                    text
+                }
+
+                Spacer(minLength: 0)
+
+                if !item.done {
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Color(red: 0.87, green: 0.87, blue: 0.87)) // #DDDDDD
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                        .padding(.trailing, 8)
+                }
             }
 
-            Spacer(minLength: 0)
-
-            if !item.done {
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(Color(red: 0.87, green: 0.87, blue: 0.87)) // #DDDDDD
-                    .padding(.trailing, 8)
+            if isExpanded, let desc = item.description, !desc.isEmpty {
+                Text(desc)
+                    .font(.system(size: 13))
+                    .foregroundStyle(Color.punchGray)
+                    .lineLimit(nil)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 8)
+                    .padding(.leading, 44) // align with text (circle 30 + spacing 14)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 14)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isExpanded)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(accentColor.opacity(hasActiveStatus ? 0.3 : 0), lineWidth: 1)
@@ -100,16 +123,25 @@ struct ItemRow: View {
                         .onTapGesture { onToggle() }
                 }
             } else {
-                // Project: tap bumps undone items, tap toggles done items
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        if item.done {
-                            onToggle()
-                        } else {
-                            onBump()
+                // Project: left 80% expands (circle tap), right 20% bumps
+                if !item.done {
+                    GeometryReader { geo in
+                        HStack(spacing: 0) {
+                            Color.clear
+                                .contentShape(Rectangle())
+                                .onTapGesture { onCircleTap() }
+
+                            Color.clear
+                                .frame(width: geo.size.width * 0.2)
+                                .contentShape(Rectangle())
+                                .onTapGesture { onBump() }
                         }
                     }
+                } else {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { onToggle() }
+                }
             }
         }
     }

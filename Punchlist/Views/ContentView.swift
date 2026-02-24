@@ -5,6 +5,8 @@ struct ContentView: View {
     @State private var inputText = ""
     @State private var showDebugLog = false
     @State private var showProjectPicker = false
+    @State private var expandedItemID: String?
+    @State private var lastInactiveDate: Date?
     @Environment(\.scenePhase) private var scenePhase
     @FocusState private var inputFocused: Bool
 
@@ -42,9 +44,19 @@ struct ContentView: View {
         .onAppear { viewModel.start() }
         .onDisappear { viewModel.stop() }
         .onChange(of: scenePhase) { _, newPhase in
-            if newPhase == .active {
-                showProjectPicker = false
-                viewModel.refresh()
+            switch newPhase {
+            case .active:
+                // Only refresh on foreground resume, not initial launch.
+                // lastInactiveDate is nil on first launch so this skips the
+                // start()/refresh() double-connect race.
+                if lastInactiveDate != nil {
+                    showProjectPicker = false
+                    viewModel.refresh()
+                }
+            case .inactive, .background:
+                lastInactiveDate = Date()
+            @unknown default:
+                break
             }
         }
     }
@@ -54,6 +66,7 @@ struct ContentView: View {
             ForEach(viewModel.projects) { project in
                 Button {
                     viewModel.switchToProject(slug: project.slug)
+                    expandedItemID = nil
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                         showProjectPicker = false
                     }
@@ -133,6 +146,7 @@ struct ContentView: View {
     }
 
     private func dismissPicker() {
+        expandedItemID = nil
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             showProjectPicker = false
         }
@@ -156,8 +170,14 @@ struct ContentView: View {
                         ItemRow(
                             item: item,
                             isPersonal: viewModel.isPersonal,
+                            isExpanded: expandedItemID == item.id,
                             onToggle: { viewModel.toggleItem(item) },
-                            onBump: { viewModel.bumpItem(item) }
+                            onBump: { viewModel.bumpItem(item) },
+                            onCircleTap: {
+                                withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                    expandedItemID = expandedItemID == item.id ? nil : item.id
+                                }
+                            }
                         )
                         .id(item.id)
                     }
