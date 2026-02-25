@@ -2,20 +2,9 @@ import SwiftUI
 
 struct PlanQuestionsView: View {
     let questions: [PlanQuestion]
-    @State private var selections: [String: String] = [:]    // questionID -> optionValue (or "_other")
-    @State private var otherText: [String: String] = [:]     // questionID -> freeform text
+    @Binding var selections: [String: String]     // questionID -> optionValue (or "_other")
+    @Binding var otherText: [String: String]       // questionID -> freeform text
     @FocusState private var focusedQuestion: String?
-
-    /// Whether every question has been answered (option selected, or Other with text).
-    var allAnswered: Bool {
-        questions.allSatisfy { q in
-            guard let sel = selections[q.id] else { return false }
-            if sel == "_other" {
-                return !(otherText[q.id] ?? "").trimmingCharacters(in: .whitespaces).isEmpty
-            }
-            return true
-        }
-    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -51,11 +40,13 @@ struct PlanQuestionsView: View {
             // Show selected option's description
             if let selected = selections[question.id], selected != "_other",
                let option = question.options.first(where: { $0.value == selected }) {
-                Text(option.description)
-                    .font(.system(size: 11))
-                    .foregroundStyle(Color.punchGray.opacity(0.8))
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 2)
+                if let desc = option.description, !desc.isEmpty {
+                    Text(desc)
+                        .font(.system(size: 11))
+                        .foregroundStyle(Color.punchGray.opacity(0.8))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 2)
+                }
             }
 
             // Show freeform input when "Other" is selected
@@ -154,6 +145,7 @@ struct PlanQuestionsView: View {
                     .stroke(Color.punchGray.opacity(0.12), lineWidth: 1)
             )
     }
+
 }
 
 /// Simple flow layout that wraps children to the next line when they exceed available width.

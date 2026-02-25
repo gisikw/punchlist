@@ -14,6 +14,9 @@ final class PunchlistViewModel {
     }
     var debugLog: [String] { webSocket.debugLog }
 
+    /// Cached plan questions per item ID. Populated on expand of blocked items.
+    var questionsForItem: [String: [PlanQuestion]] = [:]
+
     var currentProject: Project? {
         projects.first { $0.slug == currentProjectSlug }
     }
@@ -237,6 +240,27 @@ final class PunchlistViewModel {
                 self?.refreshAgentStatus()
             }
         }
+    }
+
+    // MARK: - Plan Questions
+
+    func fetchQuestions(for itemID: String) {
+        let slug = apiSlug
+        Task {
+            if let questions = try? await api.fetchQuestions(project: slug, id: itemID) {
+                self.questionsForItem[itemID] = questions
+            }
+        }
+    }
+
+    func submitAnswers(for itemID: String, answers: [String: String]) {
+        guard !answers.isEmpty else { return }
+        let slug = apiSlug
+        Task {
+            try? await api.submitAnswers(project: slug, id: itemID, answers: answers)
+        }
+        // Clear cached questions — they'll be re-fetched if needed
+        questionsForItem.removeValue(forKey: itemID)
     }
 
     // MARK: - Connection observation

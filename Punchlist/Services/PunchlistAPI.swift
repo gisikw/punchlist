@@ -53,6 +53,23 @@ struct PunchlistAPI {
         let _ = try await URLSession.shared.data(for: request)
     }
 
+    // MARK: - Plan Questions
+
+    func fetchQuestions(project: String, id: String) async throws -> [PlanQuestion] {
+        let url = itemURL(project: project, id: id).appendingPathComponent("questions")
+        let (data, _) = try await URLSession.shared.data(from: url)
+        return try JSONDecoder().decode([PlanQuestion].self, from: data)
+    }
+
+    func submitAnswers(project: String, id: String, answers: [String: String]) async throws {
+        let url = itemURL(project: project, id: id).appendingPathComponent("questions")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(answers)
+        let _ = try await URLSession.shared.data(for: request)
+    }
+
     // MARK: - Agent
 
     enum AgentState: String, Codable {

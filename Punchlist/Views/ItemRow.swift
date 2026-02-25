@@ -4,6 +4,9 @@ struct ItemRow: View {
     let item: Item
     let isPersonal: Bool
     let isExpanded: Bool
+    let questions: [PlanQuestion]
+    @Binding var selections: [String: String]
+    @Binding var otherText: [String: String]
     let onToggle: () -> Void
     let onBump: () -> Void
     let onExpand: () -> Void
@@ -61,9 +64,13 @@ struct ItemRow: View {
 
             // Interactive elements sit outside the tap overlay so their gestures aren't blocked
             if isExpanded && !item.done {
-                if isBlocked {
-                    PlanQuestionsView(questions: Self.hardcodedQuestions)
-                        .padding(.top, 12)
+                if isBlocked && !questions.isEmpty {
+                    PlanQuestionsView(
+                        questions: questions,
+                        selections: $selections,
+                        otherText: $otherText
+                    )
+                    .padding(.top, 12)
                 }
                 holdToCloseBar
                     .padding(.top, 10)
@@ -251,50 +258,6 @@ struct ItemRow: View {
         }
         .frame(width: 30, height: 30)
     }
-
-    // MARK: - Hardcoded plan questions (placeholder until server-driven)
-
-    static let hardcodedQuestions: [PlanQuestion] = [
-        PlanQuestion(
-            id: "q1",
-            question: "Should we keep backwards compatibility with pipeline.yml?",
-            context: "INVARIANTS.md says 'avoid backwards-compatibility hacks', but this is infrastructure work that could disrupt users mid-development.",
-            options: [
-                PlanOption(label: "Deprecation path (Recommended)", value: "deprecate",
-                           description: "FindPipelineConfig tries config.yaml first, falls back to pipeline.yml with a stderr warning. Remove fallback in a future ticket."),
-                PlanOption(label: "Hard break", value: "hard_break",
-                           description: "Only look for config.yaml. Old pipeline.yml files are ignored immediately."),
-                PlanOption(label: "Silent fallback", value: "silent_fallback",
-                           description: "Try config.yaml first, fall back to pipeline.yml without warning. No migration pressure."),
-            ]
-        ),
-        PlanQuestion(
-            id: "q2",
-            question: "What happens to the standalone .ko/prefix file for existing projects?",
-            context: "Old projects have .ko/prefix. New projects will write prefix into config.yaml.",
-            options: [
-                PlanOption(label: "Read fallback, write new only (Recommended)", value: "fallback_read",
-                           description: "ReadPrefix checks config.yaml first, falls back to .ko/prefix. WritePrefix only writes to config.yaml. Natural migration on next write."),
-                PlanOption(label: "Dual write", value: "dual_write",
-                           description: "Write prefix to both config.yaml and .ko/prefix for full backwards compat."),
-                PlanOption(label: "Hard break", value: "hard_break_prefix",
-                           description: "Only read/write config.yaml. Old .ko/prefix files are ignored immediately."),
-            ]
-        ),
-        PlanQuestion(
-            id: "q3",
-            question: "Should prefix be writable after init, or set-once?",
-            context: "Currently WritePrefix exists and is called from detectPrefix. But prefix changes are rare and potentially dangerous (breaks existing ticket IDs).",
-            options: [
-                PlanOption(label: "Keep writable (Recommended)", value: "writable",
-                           description: "Maintain existing behavior. Read config, update prefix field, write back. Don't optimize for a rare operation."),
-                PlanOption(label: "Set-once, warn on change", value: "set_once_warn",
-                           description: "Allow writes but emit a warning when changing an existing prefix. Makes the danger visible."),
-                PlanOption(label: "Set-once, error on change", value: "set_once_error",
-                           description: "Refuse to change prefix after init. Require a --force flag or manual config edit."),
-            ]
-        ),
-    ]
 
     private var text: some View {
         Text(item.text)

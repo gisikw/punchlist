@@ -1,20 +1,18 @@
 import Foundation
 
-struct PlanOption: Identifiable {
-    let id: String
+struct PlanOption: Identifiable, Codable {
     let label: String
     let value: String
-    let description: String
+    let description: String?
 
-    init(label: String, value: String, description: String) {
-        self.id = value
-        self.label = label
-        self.value = value
-        self.description = description
+    var id: String { value }
+
+    enum CodingKeys: String, CodingKey {
+        case label, value, description
     }
 }
 
-struct PlanQuestion: Identifiable {
+struct PlanQuestion: Identifiable, Codable {
     let id: String
     let question: String
     let context: String?

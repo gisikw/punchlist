@@ -6,6 +6,8 @@ struct ContentView: View {
     @State private var showDebugLog = false
     @State private var showProjectPicker = false
     @State private var expandedItemID: String?
+    @State private var questionSelections: [String: [String: String]] = [:]  // itemID -> (questionID -> value)
+    @State private var questionOtherText: [String: [String: String]] = [:]  // itemID -> (questionID -> text)
     @State private var lastInactiveDate: Date?
     @Environment(\.scenePhase) private var scenePhase
     @FocusState private var inputFocused: Bool
@@ -171,14 +173,21 @@ struct ContentView: View {
                             item: item,
                             isPersonal: viewModel.isPersonal,
                             isExpanded: expandedItemID == item.id,
+                            questions: viewModel.questionsForItem[item.id] ?? [],
+                            selections: selectionsBinding(for: item.id),
+                            otherText: otherTextBinding(for: item.id),
                             onToggle: { viewModel.toggleItem(item) },
                             onBump: { viewModel.bumpItem(item) },
                             onExpand: {
                                 withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                                     expandedItemID = item.id
                                 }
+                                if item.status == "blocked" {
+                                    viewModel.fetchQuestions(for: item.id)
+                                }
                             },
                             onCollapse: {
+                                submitAnswersIfNeeded(for: item.id)
                                 withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                                     expandedItemID = nil
                                 }
@@ -219,6 +228,49 @@ struct ContentView: View {
             .frame(maxHeight: 150)
             .background(Color.punchBackground)
         }
+    }
+
+    // MARK: - Plan question state helpers
+
+    private func selectionsBinding(for itemID: String) -> Binding<[String: String]> {
+        Binding(
+            get: { questionSelections[itemID] ?? [:] },
+            set: { questionSelections[itemID] = $0 }
+        )
+    }
+
+    private func otherTextBinding(for itemID: String) -> Binding<[String: String]> {
+        Binding(
+            get: { questionOtherText[itemID] ?? [:] },
+            set: { questionOtherText[itemID] = $0 }
+        )
+    }
+
+    private func submitAnswersIfNeeded(for itemID: String) {
+        let sels = questionSelections[itemID] ?? [:]
+        guard !sels.isEmpty else { return }
+
+        // Resolve _other selections to their freeform text
+        let others = questionOtherText[itemID] ?? [:]
+        var answers: [String: String] = [:]
+        for (questionID, value) in sels {
+            if value == "_other" {
+                let text = (others[questionID] ?? "").trimmingCharacters(in: .whitespaces)
+                if !text.isEmpty {
+                    answers[questionID] = text
+                }
+            } else {
+                answers[questionID] = value
+            }
+        }
+
+        if !answers.isEmpty {
+            viewModel.submitAnswers(for: itemID, answers: answers)
+        }
+
+        // Clear local state
+        questionSelections.removeValue(forKey: itemID)
+        questionOtherText.removeValue(forKey: itemID)
     }
 
     private var inputBar: some View {
