@@ -8,7 +8,9 @@ struct PlanOption: Identifiable, Codable {
     var id: String { value }
 
     enum CodingKeys: String, CodingKey {
-        case label, value, description
+        case label = "Label"
+        case value = "Value"
+        case description = "Description"
     }
 }
 
@@ -17,4 +19,11 @@ struct PlanQuestion: Identifiable, Codable {
     let question: String
     let context: String?
     let options: [PlanOption]
+
+    enum CodingKeys: String, CodingKey {
+        case id = "ID"
+        case question = "Question"
+        case context = "Context"
+        case options = "Options"
+    }
 }
