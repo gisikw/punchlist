@@ -25,3 +25,5 @@ Removes the punchlist-server directory entirely to clean up the projects folder
 **2026-02-26 05:55:30 UTC:** Question: Should we continue mirroring punchlist-server to GitHub, or stop the mirror in the forge config?
 Answer: Keep mirroring active
 Leave the forge config unchanged; punchlist-server continues to mirror to GitHub
+
+**2026-02-26 06:03:42 UTC:** ko: FAIL at node 'classify' — node 'classify' failed after 3 attempts: no fenced JSON block found in output
