@@ -147,13 +147,11 @@ struct ContentView: View {
 
     private var completionCircle: some View {
         Button {
-            viewModel.showCompletedFromSession.toggle()
+            viewModel.clearAgentSession()
         } label: {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 22))
                 .foregroundStyle(Color.punchGreen)
-                .opacity(viewModel.showCompletedFromSession ? 0.6 : 1.0)
-                .animation(.easeInOut(duration: 0.2), value: viewModel.showCompletedFromSession)
         }
     }
 
