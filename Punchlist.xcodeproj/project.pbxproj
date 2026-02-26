@@ -19,9 +19,9 @@
 		A10012 /* PlanQuestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10012; };
 		A10013 /* KoAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10013; };
 		A10014 /* SSEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10014; };
-	A10015 /* PunchlistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10015; };
-	A10016 /* FilteringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10016; };
-	A10017 /* PollingFallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10017; };
+		A20001 /* PunchlistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20001; };
+		A20002 /* FilteringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20002; };
+		A20003 /* PollingFallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20003; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,11 +37,11 @@
 		B10012 /* PlanQuestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanQuestionsView.swift; sourceTree = "<group>"; };
 		B10013 /* KoAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoAPI.swift; sourceTree = "<group>"; };
 		B10014 /* SSEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEManager.swift; sourceTree = "<group>"; };
-		B10015 /* PunchlistTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PunchlistTests.swift; sourceTree = "<group>"; };
-		B10016 /* FilteringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteringTests.swift; sourceTree = "<group>"; };
-		B10017 /* PollingFallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingFallbackTests.swift; sourceTree = "<group>"; };
+		B20001 /* PunchlistTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PunchlistTests.swift; sourceTree = "<group>"; };
+		B20002 /* FilteringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteringTests.swift; sourceTree = "<group>"; };
+		B20003 /* PollingFallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingFallbackTests.swift; sourceTree = "<group>"; };
 		C10001 /* Punchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Punchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C10002 /* PunchlistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PunchlistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C20001 /* PunchlistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PunchlistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,13 +52,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-	D10002 /* Frameworks */ = {
-		isa = PBXFrameworksBuildPhase;
-		buildActionMask = 2147483647;
-		files = (
-		);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
+		D20001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -66,7 +66,7 @@
 			isa = PBXGroup;
 			children = (
 				E10002 /* Punchlist */,
-			E10008 /* PunchlistTests */,
+				E20001 /* PunchlistTests */,
 				E10007 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -122,12 +122,12 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		E10008 /* PunchlistTests */ = {
+		E20001 /* PunchlistTests */ = {
 			isa = PBXGroup;
 			children = (
-				B10015 /* PunchlistTests.swift */,
-				B10016 /* FilteringTests.swift */,
-				B10017 /* PollingFallbackTests.swift */,
+				B20001 /* PunchlistTests.swift */,
+				B20002 /* FilteringTests.swift */,
+				B20003 /* PollingFallbackTests.swift */,
 			);
 			path = PunchlistTests;
 			sourceTree = "<group>";
@@ -136,7 +136,7 @@
 			isa = PBXGroup;
 			children = (
 				C10001 /* Punchlist.app */,
-				C10002 /* PunchlistTests.xctest */,
+				C20001 /* PunchlistTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -161,40 +161,41 @@
 			productReference = C10001 /* Punchlist.app */;
 			productType = "com.apple.product-type.application";
 		};
-	F10002 /* PunchlistTests */ = {
-		isa = PBXNativeTarget;
-		buildConfigurationList = G10004;
-		buildPhases = (
-			F10004 /* Sources */,
-			D10002 /* Frameworks */,
-		);
-		buildRules = ();
-		dependencies = (
-			F10003 /* Target dependency */,
-		);
-		name = PunchlistTests;
-		productName = PunchlistTests;
-		productReference = C10002 /* PunchlistTests.xctest */;
-		productType = "com.apple.product-type.bundle.unit-test";
-	};
+		F20001 /* PunchlistTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = G20003;
+			buildPhases = (
+				F20002 /* Sources */,
+				D20001 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F20003 /* PBXTargetDependency */,
+			);
+			name = PunchlistTests;
+			productName = PunchlistTests;
+			productReference = C20001 /* PunchlistTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXTargetDependency section */
-	F10003 /* Target dependency */ = {
-		isa = PBXTargetDependency;
-		target = F10001 /* Punchlist */;
-		targetProxy = F10005 /* PBXContainerItemProxy */;
-	};
+		F20003 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F10001 /* Punchlist */;
+			targetProxy = F20004 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXContainerItemProxy section */
-	F10005 /* PBXContainerItemProxy */ = {
-		isa = PBXContainerItemProxy;
-		containerPortal = H10001 /* Project object */;
-		proxyType = 1;
-		remoteGlobalIDString = F10001;
-		remoteInfo = Punchlist;
-	};
+		F20004 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = H10001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F10001;
+			remoteInfo = Punchlist;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXProject section */
@@ -207,9 +208,10 @@
 				TargetAttributes = {
 					F10001 = {
 						CreatedOnToolsVersion = 16.0;
-					F10002 = {
-						CreatedOnToolsVersion = 16.0;
 					};
+					F20001 = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = F10001;
 					};
 				};
 			};
@@ -227,7 +229,7 @@
 			projectRoot = "";
 			targets = (
 				F10001 /* Punchlist */,
-				F10002 /* PunchlistTests */,
+				F20001 /* PunchlistTests */,
 			);
 		};
 /* End PBXProject section */
@@ -262,16 +264,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-	F10004 /* Sources */ = {
-		isa = PBXSourcesBuildPhase;
-		buildActionMask = 2147483647;
-		files = (
-			A10015 /* PunchlistTests.swift in Sources */,
-			A10016 /* FilteringTests.swift in Sources */,
-			A10017 /* PollingFallbackTests.swift in Sources */,
-		);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
+		F20002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A20001 /* PunchlistTests.swift in Sources */,
+				A20002 /* FilteringTests.swift in Sources */,
+				A20003 /* PollingFallbackTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -382,42 +384,42 @@
 			};
 			name = Release;
 		};
-	G10007 /* Debug */ = {
-		isa = XCBuildConfiguration;
-		buildSettings = {
-			BUNDLE_LOADER = "$(TEST_HOST)";
-			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 1;
-			GENERATE_INFOPLIST_FILE = YES;
-			IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-			MARKETING_VERSION = 1.0;
-			PRODUCT_BUNDLE_IDENTIFIER = network.gisi.punchlist.tests;
-			PRODUCT_NAME = "$(TARGET_NAME)";
-			SWIFT_EMIT_LOC_STRINGS = NO;
-			SWIFT_VERSION = 5.0;
-			TARGET_DEVICE_FAMILY = "1,2";
-			TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Punchlist.app/Punchlist";
+		G20001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = network.gisi.punchlist.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Punchlist.app/Punchlist";
+			};
+			name = Debug;
 		};
-		name = Debug;
-	};
-	G10008 /* Release */ = {
-		isa = XCBuildConfiguration;
-		buildSettings = {
-			BUNDLE_LOADER = "$(TEST_HOST)";
-			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 1;
-			GENERATE_INFOPLIST_FILE = YES;
-			IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-			MARKETING_VERSION = 1.0;
-			PRODUCT_BUNDLE_IDENTIFIER = network.gisi.punchlist.tests;
-			PRODUCT_NAME = "$(TARGET_NAME)";
-			SWIFT_EMIT_LOC_STRINGS = NO;
-			SWIFT_VERSION = 5.0;
-			TARGET_DEVICE_FAMILY = "1,2";
-			TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Punchlist.app/Punchlist";
+		G20002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = network.gisi.punchlist.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Punchlist.app/Punchlist";
+			};
+			name = Release;
 		};
-		name = Release;
-	};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -439,15 +441,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-	G10004 /* Build configuration list for PBXNativeTarget "PunchlistTests" */ = {
-		isa = XCConfigurationList;
-		buildConfigurations = (
-			G10007 /* Debug */,
-			G10008 /* Release */,
-		);
-		defaultConfigurationIsVisible = 0;
-		defaultConfigurationName = Release;
-	};
+		G20003 /* Build configuration list for PBXNativeTarget "PunchlistTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				G20001 /* Debug */,
+				G20002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 	};

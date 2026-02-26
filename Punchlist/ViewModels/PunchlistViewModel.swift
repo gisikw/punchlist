@@ -351,7 +351,7 @@ final class PunchlistViewModel {
             var wasConnected = self.isConnected
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(2))
-                guard !Task.isCancelled, let self else { break }
+                guard !Task.isCancelled else { break }
                 let connected = self.isConnected
                 if wasConnected && !connected {
                     self.startPollingIfNeeded()
