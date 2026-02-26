@@ -1,0 +1,3 @@
+Plan written to `/home/dev/Projects/punchlist/.ko/tickets/pun-93ed.artifacts/plan.md`. 
+
+The issue is clear: when a large expanded ticket collapses, the `ItemRow` shrinks but the `ScrollView` doesn't recalculate its scroll position quickly enough, causing items to appear to disappear above the viewport. The solution is to use `ScrollViewReader.scrollTo()` after the collapse animation completes to force the scroll container to resize and reposition correctly. The plan recommends scrolling to the collapsed item with a `.bottom` anchor, which keeps it visible while allowing proper container resizing.
