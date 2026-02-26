@@ -78,6 +78,7 @@ struct ItemRow: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 14)
+        .padding(8)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isExpanded)
@@ -86,7 +87,7 @@ struct ItemRow: View {
                 .stroke(accentColor.opacity(hasActiveStatus ? 0.3 : 0), lineWidth: 1)
         )
         .shadow(color: hasActiveStatus ? accentColor.opacity(hasPulse ? (pulseActive ? 0.18 : 0.06) : 0.12) : .black.opacity(0.08),
-                radius: hasActiveStatus ? (hasPulse ? (pulseActive ? 8 : 4) : 6) : 1.5, y: hasActiveStatus ? 0 : 1)
+                radius: hasActiveStatus ? 8 : 1.5, y: hasActiveStatus ? 0 : 1)
         .onAppear {
             if hasPulse {
                 withAnimation(.easeInOut(duration: 2.0).repeatForever(autoreverses: true)) {
