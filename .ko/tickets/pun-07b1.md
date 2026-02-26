@@ -10,26 +10,4 @@ priority: 2
 
 ## Notes
 
-**2026-02-26 17:29:11 UTC:** ko: FAIL at node 'verify' — node 'verify' failed after 3 attempts: command failed: exit status 1
-error:
-       … while calling the 'import' builtin
-         at «string»:1:18:
-            1| {...}@args: with import <nixpkgs> args; (pkgs.runCommandCC or pkgs.runCommand) "shell" { buildInputs = [ (sshpass) (rsync) ]; } ""
-             |                  ^
-
-       … while realising the context of a path
-
-       … while calling the 'findFile' builtin
-         at «string»:1:25:
-            1| {...}@args: with import <nixpkgs> args; (pkgs.runCommandCC or pkgs.runCommand) "shell" { buildInputs = [ (sshpass) (rsync) ]; } ""
-             |                         ^
-
-       error: file 'nixpkgs' was not found in the Nix search path (add it using $NIX_PATH or -I)
-error: Recipe `sync` failed with exit code 1
-
-
-**2026-02-26 19:20:46 UTC:** ko: FAIL at node 'classify' — node 'classify' failed after 3 attempts: no fenced JSON block found in output
-
-**2026-02-26 20:23:24 UTC:** ko: FAIL at node 'classify' — node 'classify' failed after 3 attempts: no fenced JSON block found in output
-
-**2026-02-26 21:09:50 UTC:** ko: FAIL at node 'classify' — node 'classify' failed after 3 attempts: no fenced JSON block found in output
+**2026-02-26 21:15:34 UTC:** ko: FAIL at node 'classify' — node 'classify' failed after 3 attempts: no fenced JSON block found in output
