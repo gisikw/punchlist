@@ -5,3 +5,8 @@ loop: pun-6225 SUCCEED
 loop: building pun-a647 — Agent toggle shouldn't be visible when the project drawer is open
 {"blocked":0,"decomposed":0,"failed":6,"runtime_seconds":2714.550797141,"stop_reason":"empty","succeeded":6,"tickets_processed":12,"ts":"2026-02-26T06:35:48Z"}
 loop: building pun-ef56 — Can we make the in_progress ticket a little more obviously animated? The breathing dot is nice, but too subtle
+loop: pun-ef56 SUCCEED
+loop complete: 1 processed (1 succeeded, 0 failed, 0 blocked, 0 decomposed)
+stopped: empty
+{"blocked":0,"decomposed":0,"failed":0,"runtime_seconds":190.821850174,"stop_reason":"empty","succeeded":1,"tickets_processed":1,"ts":"2026-02-26T12:42:26Z"}
+loop: building pun-38d2 — Could we make the whole in_progress card have the breathing animation? Like maybe the card itself has a pulsing blue shadow/glow, not just the circle?

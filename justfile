@@ -19,7 +19,7 @@ test:
 # Sync source to build host
 sync:
     #!/usr/bin/env bash
-    nix-shell -p sshpass rsync --run "sshpass -p '$BUILD_PASS' rsync -avz --exclude='.git' --exclude='.tickets' --exclude='.env' . $BUILD_USER@$BUILD_HOST:{{remote_dir}}/"
+    nix-shell -p sshpass rsync --run "sshpass -p '$BUILD_PASS' rsync -avz --exclude='.git' --exclude='.tickets' --exclude='.env' --exclude='.ko' . $BUILD_USER@$BUILD_HOST:{{remote_dir}}/"
 
 # Build for iOS simulator
 build: sync

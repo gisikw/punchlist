@@ -88,7 +88,7 @@ struct ItemRow: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isExpanded)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(accentColor.opacity(hasActiveStatus ? 0.3 : 0), lineWidth: 1)
+                .stroke(accentColor.opacity(hasActiveStatus ? (hasPulse ? (pulseActive ? 0.5 : 0.15) : 0.3) : 0), lineWidth: 1)
         )
         .shadow(color: hasActiveStatus ? accentColor.opacity(hasPulse ? (pulseActive ? 0.28 : 0.03) : 0.12) : .black.opacity(0.08),
                 radius: hasActiveStatus ? 8 : 1.5, y: hasActiveStatus ? 0 : 1)
