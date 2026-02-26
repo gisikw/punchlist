@@ -21,6 +21,7 @@
 		A10014 /* SSEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10014; };
 	A10015 /* PunchlistTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10015; };
 	A10016 /* FilteringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10016; };
+	A10017 /* PollingFallbackTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10017; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		B10014 /* SSEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEManager.swift; sourceTree = "<group>"; };
 		B10015 /* PunchlistTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PunchlistTests.swift; sourceTree = "<group>"; };
 		B10016 /* FilteringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilteringTests.swift; sourceTree = "<group>"; };
+		B10017 /* PollingFallbackTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollingFallbackTests.swift; sourceTree = "<group>"; };
 		C10001 /* Punchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Punchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C10002 /* PunchlistTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PunchlistTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -125,6 +127,7 @@
 			children = (
 				B10015 /* PunchlistTests.swift */,
 				B10016 /* FilteringTests.swift */,
+				B10017 /* PollingFallbackTests.swift */,
 			);
 			path = PunchlistTests;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 		files = (
 			A10015 /* PunchlistTests.swift in Sources */,
 			A10016 /* FilteringTests.swift in Sources */,
+			A10017 /* PollingFallbackTests.swift in Sources */,
 		);
 		runOnlyForDeploymentPostprocessing = 0;
 	};

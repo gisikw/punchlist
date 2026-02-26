@@ -347,7 +347,8 @@ final class PunchlistViewModel {
     private func observeConnection() {
         connectionObserver?.cancel()
         connectionObserver = Task { [weak self] in
-            var wasConnected = true
+            guard let self else { return }
+            var wasConnected = self.isConnected
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(2))
                 guard !Task.isCancelled, let self else { break }

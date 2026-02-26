@@ -71,7 +71,7 @@ final class SSEManager {
 
         let del = SSEDelegate(
             onItems: { [weak self] items in self?.handleItems(items, attempt: attempt) },
-            onComplete: { [weak self] in self?.handleDisconnect() }
+            onComplete: { [weak self] error in self?.handleDisconnect(error: error, attempt: attempt) }
         )
         self.delegate = del
 
@@ -109,8 +109,12 @@ final class SSEManager {
         }
     }
 
-    private func handleDisconnect() {
+    private func handleDisconnect(error: Error?, attempt: Int) {
         task = nil
+
+        if let error = error {
+            log("connection failed #\(attempt) — \(error.localizedDescription)")
+        }
 
         offlineTimer = Task { @MainActor in
             try? await Task.sleep(for: .seconds(3))
@@ -145,7 +149,7 @@ final class SSEManager {
 
 private final class SSEDelegate: NSObject, URLSessionDataDelegate {
     private let onItems: ([Item]) -> Void
-    private let onComplete: () -> Void
+    private let onComplete: (Error?) -> Void
     private var buffer = ""
     private let decoder = JSONDecoder()
     /// Accumulate items across all data: lines in a single SSE frame burst.
@@ -153,7 +157,7 @@ private final class SSEDelegate: NSObject, URLSessionDataDelegate {
     /// a logical batch (the full project state on connect, or a mutation set).
     private var pendingItems: [Item] = []
 
-    init(onItems: @escaping ([Item]) -> Void, onComplete: @escaping () -> Void) {
+    init(onItems: @escaping ([Item]) -> Void, onComplete: @escaping (Error?) -> Void) {
         self.onItems = onItems
         self.onComplete = onComplete
     }
@@ -184,6 +188,6 @@ private final class SSEDelegate: NSObject, URLSessionDataDelegate {
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        onComplete()
+        onComplete(error)
     }
 }
