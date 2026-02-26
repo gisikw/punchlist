@@ -1,22 +1,13 @@
-Looking at this ticket, I need to classify what kind of work it requires.
+Looking at this ticket, I can see it clearly describes what needs to be built:
 
-## Analysis
+**What it asks for:** Change the behavior of the hold bar action on blocked tickets to be context-aware:
+- If there are no open questions → hold should **open** the ticket
+- If there are open questions → hold should **close** the ticket  
+- If not blocked → hold should toggle as normal (existing behavior)
 
-The ticket describes:
-- **What to build**: A behavioral change to the "hold bar action on blocked ticket"
-- **Specific requirement**: Change the logic so that if there are no open questions, the action should OPEN the ticket instead of closing it
-- **Clear fix**: The implementation is straightforward—conditional logic based on whether open questions exist
-- **Expected output**: Code changes to implement this new behavior
+**Expected output:** Code changes to implement this conditional behavior.
 
-## Classification
-
-This is a **task**.
-
-The ticket clearly specifies what needs to be built (a feature change with defined behavior), not what's broken. It describes the desired behavior change with a clear decision tree:
-- No open questions → open the ticket
-- Open questions exist → close the ticket (current behavior)
-
-The fix is well-defined and doesn't require investigation or diagnosis.
+This is a feature specification with a clear description of what to build, not a bug report or a question requiring investigation.
 
 ```json
 {"disposition": "route", "workflow": "task"}

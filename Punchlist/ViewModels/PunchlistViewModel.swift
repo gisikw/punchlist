@@ -226,6 +226,42 @@ final class PunchlistViewModel {
         afterAction()
     }
 
+    func openItem(_ item: Item) {
+        let action: () async -> Void = { [api] in
+            try? await api.openItem(id: item.id)
+        }
+
+        if isConnected {
+            Task { await action() }
+        } else {
+            guard let idx = items.firstIndex(where: { $0.id == item.id }) else { return }
+            var opened = items[idx]
+            opened.done = false
+            items.remove(at: idx)
+            items.insert(opened, at: 0)
+            pendingQueue.append(action)
+        }
+        afterAction()
+    }
+
+    func closeItem(_ item: Item) {
+        let action: () async -> Void = { [api] in
+            try? await api.closeItem(id: item.id)
+        }
+
+        if isConnected {
+            Task { await action() }
+        } else {
+            guard let idx = items.firstIndex(where: { $0.id == item.id }) else { return }
+            var closed = items[idx]
+            closed.done = true
+            items.remove(at: idx)
+            items.append(closed)
+            pendingQueue.append(action)
+        }
+        afterAction()
+    }
+
     func bumpItem(_ item: Item) {
         let action: () async -> Void = { [api] in
             try? await api.bumpItem(id: item.id)

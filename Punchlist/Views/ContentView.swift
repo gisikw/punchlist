@@ -196,6 +196,8 @@ struct ContentView: View {
                             selections: selectionsBinding(for: item.id),
                             otherText: otherTextBinding(for: item.id),
                             onToggle: { viewModel.toggleItem(item) },
+                            onOpen: { viewModel.openItem(item) },
+                            onClose: { viewModel.closeItem(item) },
                             onBump: { viewModel.bumpItem(item) },
                             onExpand: {
                                 withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {

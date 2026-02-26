@@ -27,3 +27,5 @@ loop: pun-41b2 SUCCEED
 loop: building pun-aa6b — Can we add a general 1.5s threshold on offline, not just in startup? I see it frequently appear and disappear around minor network flakiness
 loop: pun-aa6b SUCCEED
 loop: building pun-3329 — Pulse animation should apply to in_progress tickets AND tickets with open plan questions. Fix transient pulsing on tickets that appear in_progress briefly but shouldn't be. Followup to pun-3ea3.
+{"blocked":0,"decomposed":0,"failed":1,"runtime_seconds":74.205273521,"stop_reason":"empty","succeeded":0,"tickets_processed":1,"ts":"2026-02-26T21:15:34Z"}
+loop: building pun-07b1 — Let's make the hold bar action on blocked ticket behave differently: if there are no open questions, it should _open_ the ticket (assumption is it failed or we held on it, now we're ready to make it actionable again). If there _are_ open questions, then hold should still close the ticket (if we wanted to make it actionable, we could have answered the questions)

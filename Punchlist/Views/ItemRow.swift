@@ -8,6 +8,8 @@ struct ItemRow: View {
     @Binding var selections: [String: String]
     @Binding var otherText: [String: String]
     let onToggle: () -> Void
+    let onOpen: () -> Void
+    let onClose: () -> Void
     let onBump: () -> Void
     let onExpand: () -> Void
     let onCollapse: () -> Void
@@ -207,7 +209,15 @@ struct ItemRow: View {
                             isHolding = false
                             holdProgress = 0
                             holdStartTime = nil
-                            onToggle()
+                            if isBlocked {
+                                if questions.isEmpty {
+                                    onOpen()
+                                } else {
+                                    onClose()
+                                }
+                            } else {
+                                onToggle()
+                            }
                         }
                     }
                     .onEnded { _ in
