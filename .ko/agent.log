@@ -15,3 +15,5 @@ loop complete: 1 processed (1 succeeded, 0 failed, 0 blocked, 0 decomposed)
 stopped: empty
 {"blocked":0,"decomposed":0,"failed":0,"runtime_seconds":169.360770589,"stop_reason":"empty","succeeded":1,"tickets_processed":1,"ts":"2026-02-26T12:48:44Z"}
 loop: building pun-df80 — The "agent is done" checkbox that overlays the toggle should persist even if we switch away from the project and come back. Can we store those settings per-project and make sure they survive project view switches?
+{"blocked":0,"decomposed":0,"failed":1,"runtime_seconds":407.540292485,"stop_reason":"empty","succeeded":0,"tickets_processed":1,"ts":"2026-02-26T13:07:54Z"}
+loop: building pun-d645 — Personal view hides completed tasks on cold start, shows them if I toggle away and back. Completed should always show in personal view
