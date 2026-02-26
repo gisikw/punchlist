@@ -167,13 +167,28 @@ struct ItemRow: View {
                 .padding(.leading, 44)
 
             if let desc = item.description, !desc.isEmpty {
-                Text(desc)
-                    .font(.system(size: 13))
-                    .foregroundStyle(Color.punchGray)
-                    .lineLimit(nil)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.leading, 44)
+                if let attributed = try? AttributedString(
+                    markdown: desc,
+                    options: AttributedString.MarkdownParsingOptions(
+                        interpretedSyntax: .inlineOnlyPreservingWhitespace
+                    )
+                ) {
+                    Text(attributed)
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.punchGray)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.leading, 44)
+                } else {
+                    Text(desc)
+                        .font(.system(size: 13))
+                        .foregroundStyle(Color.punchGray)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.leading, 44)
+                }
             }
         }
         .transition(.opacity.combined(with: .move(edge: .top)))

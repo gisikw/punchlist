@@ -1,6 +1,6 @@
 ---
 id: pun-ed88
-status: blocked
+status: open
 deps: [pun-7201]
 created: 2026-02-25T23:49:01Z
 type: task

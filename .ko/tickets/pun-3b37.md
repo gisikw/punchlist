@@ -1,6 +1,6 @@
 ---
 id: pun-3b37
-status: resolved
+status: closed
 deps: []
 created: 2026-02-26T20:31:27Z
 type: task

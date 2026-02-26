@@ -1,6 +1,6 @@
 ---
 id: pun-aa6b
-status: resolved
+status: closed
 deps: []
 created: 2026-02-26T17:19:41Z
 type: task

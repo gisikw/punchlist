@@ -264,3 +264,109 @@ final class ProjectDecodingTests: XCTestCase {
         XCTAssertEqual(project.slug, "mapped-tag")
     }
 }
+
+final class ItemRowMarkdownTests: XCTestCase {
+    func testMarkdownBoldParsing() throws {
+        let markdown = "This is **bold** text"
+        let attributed = try AttributedString(
+            markdown: markdown,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        )
+
+        XCTAssertNotNil(attributed)
+        XCTAssertTrue(attributed.characters.count > 0)
+    }
+
+    func testMarkdownItalicParsing() throws {
+        let markdown = "This is *italic* text"
+        let attributed = try AttributedString(
+            markdown: markdown,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        )
+
+        XCTAssertNotNil(attributed)
+        XCTAssertTrue(attributed.characters.count > 0)
+    }
+
+    func testMarkdownHeaderParsing() throws {
+        let markdown = "# Header\nSome text"
+        let attributed = try AttributedString(
+            markdown: markdown,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        )
+
+        XCTAssertNotNil(attributed)
+        XCTAssertTrue(attributed.characters.count > 0)
+    }
+
+    func testMarkdownListParsing() throws {
+        let markdown = "- Item 1\n- Item 2\n- Item 3"
+        let attributed = try AttributedString(
+            markdown: markdown,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        )
+
+        XCTAssertNotNil(attributed)
+        XCTAssertTrue(attributed.characters.count > 0)
+    }
+
+    func testPlainTextFallback() throws {
+        let plainText = "This is plain text without markdown"
+        let attributed = try AttributedString(
+            markdown: plainText,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        )
+
+        XCTAssertNotNil(attributed)
+        XCTAssertEqual(String(attributed.characters), plainText)
+    }
+
+    func testMalformedMarkdownDoesNotCrash() {
+        let malformed = "**Unclosed bold"
+        let attributed = try? AttributedString(
+            markdown: malformed,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        )
+
+        // Should still parse, just won't apply formatting
+        XCTAssertNotNil(attributed)
+    }
+
+    func testEmptyStringHandling() throws {
+        let empty = ""
+        let attributed = try AttributedString(
+            markdown: empty,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        )
+
+        XCTAssertNotNil(attributed)
+        XCTAssertEqual(attributed.characters.count, 0)
+    }
+
+    func testMixedMarkdownElements() throws {
+        let mixed = "# Title\n\nSome **bold** and *italic* text:\n- Item 1\n- Item 2"
+        let attributed = try AttributedString(
+            markdown: mixed,
+            options: AttributedString.MarkdownParsingOptions(
+                interpretedSyntax: .inlineOnlyPreservingWhitespace
+            )
+        )
+
+        XCTAssertNotNil(attributed)
+        XCTAssertTrue(attributed.characters.count > 0)
+    }
+}
