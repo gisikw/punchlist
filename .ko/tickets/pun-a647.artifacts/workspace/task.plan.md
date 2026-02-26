@@ -1,0 +1,1 @@
+Plan created. The solution is simple: add `!showProjectPicker` to the existing conditional that renders the agent toggle. This will hide the toggle when the project drawer is open, matching the pattern already used elsewhere in the codebase.

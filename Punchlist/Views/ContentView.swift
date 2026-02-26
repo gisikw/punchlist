@@ -115,7 +115,8 @@ struct ContentView: View {
 
             if let agentState = viewModel.agentState,
                agentState != .notProvisioned,
-               !viewModel.isPersonal {
+               !viewModel.isPersonal,
+               !showProjectPicker {
                 agentToggle(isRunning: agentState == .running)
             }
         }
