@@ -14,7 +14,7 @@ The ticket requests a 1.5-second threshold instead, applied universally (not jus
 The ticket author says "I see it frequently appear and disappear around minor network flakiness", which points to the SSEManager disconnect timer.
 
 ## Approach
-Change the SSEManager's offline timer from 3 seconds to 1.5 seconds. This debounces the `isConnected` flag change after an SSE disconnect, preventing flicker from brief network blips. The ViewModel's startup threshold remains at 3 seconds to handle cold-start latency, but SSEManager's shorter debounce will dominate during normal operation since it controls the `isConnected` flag that feeds into `showOffline`.
+Change the SSEManager's offline timer from 3 seconds to 1.5 seconds. This debounces the `isConnected` flag change after an SSE disconnect, preventing flicker from brief network blips. The ViewModel's startup threshold remains at 3 seconds to handle cold-start latency (confirmed by ticket author: "Startup, let's give 3s of connectivity grace. Intermittent, 1.5s"). SSEManager's shorter debounce will dominate during normal operation since it controls the `isConnected` flag that feeds into `showOffline`.
 
 ## Tasks
 1. [Punchlist/Services/SSEManager.swift:120] — Change `try? await Task.sleep(for: .seconds(3))` to `try? await Task.sleep(for: .seconds(1.5))` in the `offlineTimer` within `handleDisconnect()`.
@@ -30,4 +30,4 @@ Change the SSEManager's offline timer from 3 seconds to 1.5 seconds. This deboun
    Verify: Test documentation aligns with new behavior.
 
 ## Open Questions
-Should the ViewModel's cold-start threshold (`Date().timeIntervalSince(startDate) > 3`) also be reduced to 1.5 seconds, or should it remain at 3 seconds to handle slower initial network setup? The ticket emphasizes "not just in startup" but the SSEManager change addresses the "frequently appear and disappear" flakiness issue. Keeping the startup threshold at 3s is more conservative for cold starts while still fixing the flakiness problem.
+None. Confirmed with ticket author that startup threshold stays at 3 seconds and intermittent flakiness debounce changes to 1.5 seconds.

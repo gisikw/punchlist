@@ -117,10 +117,10 @@ final class SSEManager {
         }
 
         offlineTimer = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: .seconds(1.5))
             if !Task.isCancelled {
                 self.isConnected = false
-                self.log("offline (3s elapsed)")
+                self.log("offline (1.5s elapsed)")
             }
         }
 

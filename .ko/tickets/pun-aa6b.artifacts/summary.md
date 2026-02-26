@@ -1,19 +1,4 @@
----
-id: pun-aa6b
-status: resolved
-deps: []
-created: 2026-02-26T17:19:41Z
-type: task
-priority: 2
----
-# Can we add a general 1.5s threshold on offline, not just in startup? I see it frequently appear and disappear around minor network flakiness
-
-## Notes
-
-**2026-02-26 19:09:07 UTC:** Question: Should the ViewModel's cold-start threshold also be reduced to 1.5 seconds, or should it remain at 3 seconds?
-Answer: Nope, these are different things. Startup, let's give 3s of connectivity grace. Intermittent, 1.5s. So, both things
-
-**2026-02-26 19:15:15 UTC:** # Implementation Summary
+# Implementation Summary
 
 ## What Was Done
 
@@ -51,5 +36,3 @@ This distinction was confirmed with the ticket author: *"Startup, let's give 3s 
 ## Impact
 
 The offline indicator will now appear after 1.5 seconds of SSE disconnect instead of 3 seconds, reducing the perceived lag when detecting actual network issues while still avoiding flicker on very brief interruptions.
-
-**2026-02-26 19:15:15 UTC:** ko: SUCCEED

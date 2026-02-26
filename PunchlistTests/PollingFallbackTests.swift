@@ -14,7 +14,7 @@ import XCTest
 /// **Expected:**
 /// - Polling should start immediately (triggered by startPollingIfNeeded() at line 85)
 /// - Items should load via REST API polling
-/// - Offline indicator should appear after 3 seconds (showOffline computed property)
+/// - Offline indicator should appear after 1.5 seconds (showOffline computed property)
 /// - Debug log should show "connection failed" messages from SSE
 ///
 /// ### 2. SSE established then network lost
@@ -27,7 +27,7 @@ import XCTest
 /// - Connection observer detects disconnect within 2 seconds (observeConnection() polls every 2s)
 /// - Polling starts automatically via observeConnection() → startPollingIfNeeded()
 /// - Items continue updating via REST polling (5s intervals)
-/// - Offline indicator appears after 3 seconds of SSE being down
+/// - Offline indicator appears after 1.5 seconds of SSE being down
 ///
 /// ### 3. Network restored
 /// **Steps:**

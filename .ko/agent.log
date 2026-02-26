@@ -23,3 +23,5 @@ loop: pun-43d8 SUCCEED
 loop: building pun-96d3 — Add XCTest target and test pure model decoding (Item, PlanQuestion, filtering)
 {"blocked":0,"decomposed":0,"failed":4,"runtime_seconds":1024.594193362,"stop_reason":"empty","succeeded":2,"tickets_processed":6,"ts":"2026-02-26T17:36:56Z"}
 loop: building pun-41b2 — Let's hide the agent toggle if there are no unblocked tickets
+loop: pun-41b2 SUCCEED
+loop: building pun-aa6b — Can we add a general 1.5s threshold on offline, not just in startup? I see it frequently appear and disappear around minor network flakiness

@@ -61,7 +61,7 @@ optimistic offline items use temporary IDs that get replaced on sync.
 
 - **Reconnect with exponential backoff** — 1s initial, doubles to 30s cap.
   Reset on successful connect.
-- **Offline indicator** — shown after 3s of disconnect (not immediately, to
+- **Offline indicator** — shown after 1.5s of disconnect (not immediately, to
   avoid flicker on brief interruptions).
 - **All mutations are fire-and-forget** — POST/PATCH/DELETE, don't wait for
   response. The WebSocket echo is the confirmation.

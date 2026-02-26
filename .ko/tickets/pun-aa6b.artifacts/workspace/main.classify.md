@@ -1,13 +1,15 @@
-Based on the ticket content I just read:
+I'll classify this ticket by reading its content carefully.
 
-**Ticket pun-93ed**: "If there's a large ticket expanded, on collapse the tickets can seemingly disappear because the container doesn't shrink. Scrolling eventually recovers them. But can we nudge the container to resize on item card close maybe?"
+The ticket states: **"Can we add a general 1.5s threshold on offline, not just in startup?"**
 
-This ticket:
-- Describes an observable problem (tickets disappearing when a large ticket collapses)
-- Proposes a possible solution (nudge the container to resize)
-- Asks for implementation ("can we...")
+This is asking for a code change with clear direction:
+- What needs to change: Add a 1.5-second threshold on offline indicator visibility
+- Where it applies: Generally, not just during startup
+- Why: To handle "minor network flakiness" where offline appears/disappears frequently
 
-This is a **task** — it describes what behavior needs to be built (container resizing on card close) with a clear direction. The expected output is code changes.
+The ticket author has provided context about the problem (network flakiness causing flickering) and the desired solution (a general 1.5s debounce threshold). The prior context shows this has already been investigated and a plan exists—this is ready for implementation.
+
+The expected output is code changes to apply the 1.5-second threshold across the offline detection logic.
 
 ```json
 {"disposition": "route", "workflow": "task"}
