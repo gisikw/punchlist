@@ -71,6 +71,7 @@ final class PunchlistViewModel {
     }
 
     func refresh() {
+        startDate = Date()
         sse.reconnect()
         let slug = currentProjectSlug
         Task {
