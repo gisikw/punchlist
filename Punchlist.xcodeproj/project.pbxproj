@@ -10,8 +10,6 @@
 		A10001 /* PunchlistApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10001; };
 		A10002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10002; };
 		A10003 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10003; };
-		A10004 /* PunchlistAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10004; };
-		A10005 /* WebSocketManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10005; };
 		A10006 /* PunchlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10006; };
 		A10007 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10007; };
 		A10008 /* InputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10008; };
@@ -19,14 +17,14 @@
 		A10010 /* Project.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10010; };
 		A10011 /* PlanQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10011; };
 		A10012 /* PlanQuestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10012; };
+		A10013 /* KoAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10013; };
+		A10014 /* SSEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10014; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B10001 /* PunchlistApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PunchlistApp.swift; sourceTree = "<group>"; };
 		B10002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B10003 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
-		B10004 /* PunchlistAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PunchlistAPI.swift; sourceTree = "<group>"; };
-		B10005 /* WebSocketManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketManager.swift; sourceTree = "<group>"; };
 		B10006 /* PunchlistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PunchlistViewModel.swift; sourceTree = "<group>"; };
 		B10007 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
 		B10008 /* InputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputBar.swift; sourceTree = "<group>"; };
@@ -34,6 +32,8 @@
 		B10010 /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
 		B10011 /* PlanQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanQuestion.swift; sourceTree = "<group>"; };
 		B10012 /* PlanQuestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanQuestionsView.swift; sourceTree = "<group>"; };
+		B10013 /* KoAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KoAPI.swift; sourceTree = "<group>"; };
+		B10014 /* SSEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSEManager.swift; sourceTree = "<group>"; };
 		C10001 /* Punchlist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Punchlist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -82,8 +82,8 @@
 		E10004 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				B10004 /* PunchlistAPI.swift */,
-				B10005 /* WebSocketManager.swift */,
+				B10013 /* KoAPI.swift */,
+				B10014 /* SSEManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -187,14 +187,14 @@
 				A10001 /* PunchlistApp.swift in Sources */,
 				A10002 /* ContentView.swift in Sources */,
 				A10003 /* Item.swift in Sources */,
-				A10004 /* PunchlistAPI.swift in Sources */,
-				A10005 /* WebSocketManager.swift in Sources */,
 				A10006 /* PunchlistViewModel.swift in Sources */,
 				A10007 /* ItemRow.swift in Sources */,
 				A10008 /* InputBar.swift in Sources */,
 				A10010 /* Project.swift in Sources */,
 				A10011 /* PlanQuestion.swift in Sources */,
 				A10012 /* PlanQuestionsView.swift in Sources */,
+				A10013 /* KoAPI.swift in Sources */,
+				A10014 /* SSEManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
