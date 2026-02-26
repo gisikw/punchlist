@@ -1,16 +1,4 @@
----
-id: pun-fbc0
-status: resolved
-deps: []
-created: 2026-02-26T17:16:46Z
-type: task
-priority: 2
----
-# Can the add item input grow dynamically with word-wrap? If this is liable to cause cascading UX issues, push back on this
-
-## Notes
-
-**2026-02-26 17:36:56 UTC:** # Findings: Dynamic Input Growth with Word-Wrap
+# Findings: Dynamic Input Growth with Word-Wrap
 
 ## Summary
 
@@ -232,5 +220,3 @@ This maintains simplicity while still showing full text once submitted.
 **Recommendation**: Proceed with implementation BUT prototype and test thoroughly before shipping. The scroll anchor issue is the biggest risk and should be addressed first. Consider whether the added complexity is worth the benefit of inline multi-line editing vs. the current simple single-line input.
 
 The feature is **viable but not trivial** - it will require thoughtful UX work beyond just adding the technical capability.
-
-**2026-02-26 17:36:56 UTC:** ko: SUCCEED
