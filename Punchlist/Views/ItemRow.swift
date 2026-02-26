@@ -34,8 +34,13 @@ struct ItemRow: View {
         item.hasUnresolvedDep == true
     }
 
+    private var hasOpenPlanQuestions: Bool {
+        guard let questions = item.planQuestions else { return false }
+        return !questions.isEmpty
+    }
+
     private var hasPulse: Bool {
-        isInProgress
+        isInProgress || hasOpenPlanQuestions
     }
 
     private var hasActiveStatus: Bool {
@@ -88,9 +93,9 @@ struct ItemRow: View {
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isExpanded)
         .overlay(
             RoundedRectangle(cornerRadius: 8)
-                .stroke(accentColor.opacity(hasActiveStatus ? (hasPulse ? (pulseActive ? 0.5 : 0.15) : 0.3) : 0), lineWidth: 1)
+                .stroke(accentColor.opacity(hasActiveStatus ? (hasPulse && pulseActive ? 0.5 : (hasPulse ? 0.15 : 0.3)) : 0), lineWidth: 1)
         )
-        .shadow(color: hasActiveStatus ? accentColor.opacity(hasPulse ? (pulseActive ? 0.28 : 0.03) : 0.12) : .black.opacity(0.08),
+        .shadow(color: hasActiveStatus ? accentColor.opacity(hasPulse && pulseActive ? 0.28 : (hasPulse ? 0.03 : 0.12)) : .black.opacity(0.08),
                 radius: hasActiveStatus ? 8 : 1.5, y: hasActiveStatus ? 0 : 1)
         .onAppear {
             if hasPulse {
@@ -242,7 +247,7 @@ struct ItemRow: View {
         ZStack {
             if hasActiveStatus {
                 Circle()
-                    .fill(accentColor.opacity(hasPulse ? (pulseActive ? 0.4 : 0.15) : 0.18))
+                    .fill(accentColor.opacity(hasPulse && pulseActive ? 0.4 : (hasPulse ? 0.15 : 0.18)))
             } else if hasUnresolvedDep {
                 Circle()
                     .fill(accentColor.opacity(0.18))

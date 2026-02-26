@@ -1,0 +1,16 @@
+{"event":"build_start","ticket":"pun-3329","ts":"2026-02-26T19:15:15Z"}
+{"event":"workflow_start","ticket":"pun-3329","ts":"2026-02-26T19:15:15Z","workflow":"main"}
+{"event":"node_start","node":"classify","ticket":"pun-3329","ts":"2026-02-26T19:15:15Z","workflow":"main"}
+{"event":"node_complete","node":"classify","result":"route","ticket":"pun-3329","ts":"2026-02-26T19:15:21Z","workflow":"main"}
+{"event":"workflow_start","ticket":"pun-3329","ts":"2026-02-26T19:15:21Z","workflow":"task"}
+{"event":"node_start","node":"plan","ticket":"pun-3329","ts":"2026-02-26T19:15:21Z","workflow":"task"}
+{"event":"node_complete","node":"plan","result":"done","ticket":"pun-3329","ts":"2026-02-26T19:16:42Z","workflow":"task"}
+{"event":"node_start","node":"actionable","ticket":"pun-3329","ts":"2026-02-26T19:16:42Z","workflow":"task"}
+{"event":"node_complete","node":"actionable","result":"continue","ticket":"pun-3329","ts":"2026-02-26T19:16:51Z","workflow":"task"}
+{"event":"node_start","node":"implement","ticket":"pun-3329","ts":"2026-02-26T19:16:51Z","workflow":"task"}
+{"event":"node_complete","node":"implement","result":"done","ticket":"pun-3329","ts":"2026-02-26T19:17:48Z","workflow":"task"}
+{"event":"node_start","node":"verify","ticket":"pun-3329","ts":"2026-02-26T19:17:48Z","workflow":"task"}
+{"event":"node_complete","node":"verify","result":"done","ticket":"pun-3329","ts":"2026-02-26T19:18:18Z","workflow":"task"}
+{"event":"node_start","node":"review","ticket":"pun-3329","ts":"2026-02-26T19:18:18Z","workflow":"task"}
+{"event":"node_complete","node":"review","result":"continue","ticket":"pun-3329","ts":"2026-02-26T19:19:13Z","workflow":"task"}
+{"event":"build_complete","outcome":"succeed","ticket":"pun-3329","ts":"2026-02-26T19:19:13Z"}

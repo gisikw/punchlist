@@ -25,3 +25,5 @@ loop: building pun-96d3 — Add XCTest target and test pure model decoding (Item
 loop: building pun-41b2 — Let's hide the agent toggle if there are no unblocked tickets
 loop: pun-41b2 SUCCEED
 loop: building pun-aa6b — Can we add a general 1.5s threshold on offline, not just in startup? I see it frequently appear and disappear around minor network flakiness
+loop: pun-aa6b SUCCEED
+loop: building pun-3329 — Pulse animation should apply to in_progress tickets AND tickets with open plan questions. Fix transient pulsing on tickets that appear in_progress briefly but shouldn't be. Followup to pun-3ea3.

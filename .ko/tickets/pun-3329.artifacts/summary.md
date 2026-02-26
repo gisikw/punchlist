@@ -1,16 +1,4 @@
----
-id: pun-3329
-status: resolved
-deps: []
-created: 2026-02-26T18:30:38Z
-type: task
-priority: 2
----
-# Pulse animation should apply to in_progress tickets AND tickets with open plan questions. Fix transient pulsing on tickets that appear in_progress briefly but shouldn't be. Followup to pun-3ea3.
-
-## Notes
-
-**2026-02-26 19:19:13 UTC:** # Implementation Summary: pun-3329
+# Implementation Summary: pun-3329
 
 ## What Was Done
 
@@ -61,5 +49,3 @@ The pulse animation system has two independent concerns now:
 2. **Pending input**: Items with unanswered plan questions pulse to draw user attention
 
 Both cases use the same visual pulse effect. The animation lifecycle is managed by `onChange(of: hasPulse)` which starts/stops the `pulseActive` animation state. The explicit `hasPulse && pulseActive` checks prevent stale animation state from showing during status transitions.
-
-**2026-02-26 19:19:13 UTC:** ko: SUCCEED
