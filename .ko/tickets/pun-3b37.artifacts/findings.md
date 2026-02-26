@@ -1,16 +1,4 @@
----
-id: pun-3b37
-status: resolved
-deps: []
-created: 2026-02-26T20:31:27Z
-type: task
-priority: 2
----
-# How bad would it be to add very basic markdown support to body render? Just holding headers, bulleted lists, italics, etc; nothing exhaustive
-
-## Notes
-
-**2026-02-26 21:12:07 UTC:** # Markdown Support in Body Rendering - Research Findings
+# Markdown Support in Body Rendering - Research Findings
 
 ## Summary
 
@@ -264,5 +252,3 @@ However, given the low complexity of Option 2, recommend implementing full markd
 Adding markdown support is **not bad at all** - it's actually quite easy. The implementation is straightforward, uses native APIs, requires minimal code changes, and has very low risk. The main decision point is whether to go with inline-only markdown (trivial) or full markdown with headers and lists (still easy, just slightly more code).
 
 Given that the ticket specifically mentions headers and lists, recommend going with Option 2 for a complete solution that provides immediate value to users while maintaining the app's clean, simple architecture.
-
-**2026-02-26 21:12:07 UTC:** ko: SUCCEED
