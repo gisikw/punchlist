@@ -24,7 +24,11 @@ final class PunchlistViewModel {
     var isPersonal: Bool { currentProjectSlug == "user" }
     var agentState: KoAPI.AgentState?
     var agentSessionStartTime: Date?
-    var showCompletedFromSession: Bool = false
+    var showCompletedFromSession: Bool = false {
+        didSet {
+            UserDefaults.standard.set(showCompletedFromSession, forKey: showCompletedSessionKey)
+        }
+    }
 
     var hasReviewableSession: Bool {
         agentSessionStartTime != nil && agentState != .running
@@ -41,6 +45,10 @@ final class PunchlistViewModel {
 
     private var agentSessionKey: String {
         "agentSessionStartTime_\(currentProjectSlug)"
+    }
+
+    private var showCompletedSessionKey: String {
+        "showCompletedFromSession_\(currentProjectSlug)"
     }
 
     func start() {
@@ -134,6 +142,9 @@ final class PunchlistViewModel {
         // Load session timestamp from UserDefaults for the new project
         let timestamp = UserDefaults.standard.double(forKey: agentSessionKey)
         agentSessionStartTime = timestamp > 0 ? Date(timeIntervalSince1970: timestamp) : nil
+
+        // Load showCompletedFromSession from UserDefaults for the new project
+        showCompletedFromSession = UserDefaults.standard.bool(forKey: showCompletedSessionKey)
 
         // SSE is URL-scoped per project; reconnect to new stream
         sse.switchProject(slug)
@@ -243,6 +254,7 @@ final class PunchlistViewModel {
         agentSessionStartTime = nil
         showCompletedFromSession = false
         UserDefaults.standard.removeObject(forKey: agentSessionKey)
+        UserDefaults.standard.removeObject(forKey: showCompletedSessionKey)
     }
 
     func toggleAgent() {
