@@ -1,8 +1,34 @@
-The plan is complete. I've investigated the codebase and identified that there are actually two separate 3-second thresholds:
+Excellent! The plan is accurate. The code matches exactly what's described:
 
-1. **SSEManager's disconnect debounce** (line 120) — delays marking the connection as offline after SSE drops, to avoid flicker from brief network interruptions
-2. **ViewModel's startup threshold** (line 13) — prevents showing the offline indicator during initial cold-start latency
+- **SSEManager.swift:120** has `try? await Task.sleep(for: .seconds(3))`
+- **SSEManager.swift:123** has the log message `"offline (3s elapsed)"`
+- **PunchlistViewModel.swift:13** has `Date().timeIntervalSince(startDate) > 3`
+- **INVARIANTS.md:64** documents "shown after 3s of disconnect"
 
-The ticket mentions "frequently appear and disappear around minor network flakiness," which points to the SSEManager's disconnect timer being the primary culprit. The plan proposes changing that to 1.5 seconds, which will reduce the debounce time and make the offline indicator appear faster after disconnects.
+The plan is complete and accurate. It identifies the two separate thresholds, proposes changing the SSEManager's debounce from 3s to 1.5s (which addresses the "frequently appear and disappear" flakiness mentioned in the ticket), and appropriately flags the open question about whether the ViewModel's cold-start threshold should also change.
 
-I've flagged an open question about whether the ViewModel's cold-start threshold should also be reduced, since the ticket says "not just in startup" but the SSEManager change would address the main issue described. This gives the implementer the context to make an informed decision or ask for clarification.
+The plan is ready for implementation once the open question is answered. Since my task is to plan (not implement), and the plan already exists and is accurate, I should confirm this to the user.
+
+---
+
+**Plan Status: Complete and Ready**
+
+The plan at `.ko/tickets/pun-aa6b.artifacts/plan.md` is comprehensive and accurate. I've verified:
+
+✅ All referenced files exist at the specified locations  
+✅ Line numbers are correct (SSEManager.swift:120, 123; PunchlistViewModel.swift:13; INVARIANTS.md:64)  
+✅ The plan correctly identifies two separate 3-second thresholds with different purposes  
+✅ Tasks are ordered with concrete verification steps  
+✅ Documentation updates are included  
+
+**What's blocking implementation:**
+
+The plan has one open question that needs resolution:
+
+> Should the ViewModel's cold-start threshold (`Date().timeIntervalSince(startDate) > 3`) also be reduced to 1.5 seconds, or remain at 3 seconds?
+
+**Recommendation:**
+
+The ticket says "I see it frequently appear and disappear around minor network flakiness" — this points to the **SSEManager's disconnect debounce** being the culprit, not the cold-start threshold. The plan's recommended approach (changing only SSEManager to 1.5s) would fix the flakiness issue while keeping cold-start behavior conservative.
+
+If you want me to proceed with the recommended approach (SSEManager-only change), I can move to implementation. Otherwise, please clarify which threshold(s) should change.

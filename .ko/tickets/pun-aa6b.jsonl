@@ -8,3 +8,15 @@
 {"event":"node_start","node":"actionable","ticket":"pun-aa6b","ts":"2026-02-26T17:20:56Z","workflow":"task"}
 {"event":"node_complete","node":"actionable","result":"needs_input","ticket":"pun-aa6b","ts":"2026-02-26T17:21:10Z","workflow":"task"}
 {"event":"build_complete","outcome":"fail","ticket":"pun-aa6b","ts":"2026-02-26T17:21:10Z"}
+{"event":"build_start","ticket":"pun-aa6b","ts":"2026-02-26T17:29:11Z"}
+{"event":"workflow_start","ticket":"pun-aa6b","ts":"2026-02-26T17:29:11Z","workflow":"main"}
+{"event":"node_start","node":"classify","ticket":"pun-aa6b","ts":"2026-02-26T17:29:11Z","workflow":"main"}
+{"event":"node_complete","node":"classify","result":"route","ticket":"pun-aa6b","ts":"2026-02-26T17:29:21Z","workflow":"main"}
+{"event":"workflow_start","ticket":"pun-aa6b","ts":"2026-02-26T17:29:21Z","workflow":"task"}
+{"event":"node_start","node":"plan","ticket":"pun-aa6b","ts":"2026-02-26T17:29:21Z","workflow":"task"}
+{"event":"node_complete","node":"plan","result":"done","ticket":"pun-aa6b","ts":"2026-02-26T17:30:00Z","workflow":"task"}
+{"event":"node_start","node":"actionable","ticket":"pun-aa6b","ts":"2026-02-26T17:30:00Z","workflow":"task"}
+{"attempt":1,"event":"node_fail","node":"actionable","reason":"invalid disposition JSON: unexpected end of JSON input","ticket":"pun-aa6b","ts":"2026-02-26T17:30:15Z","workflow":"task"}
+{"attempt":2,"event":"node_retry","node":"actionable","ticket":"pun-aa6b","ts":"2026-02-26T17:30:15Z","workflow":"task"}
+{"event":"node_complete","node":"actionable","result":"needs_input","ticket":"pun-aa6b","ts":"2026-02-26T17:30:27Z","workflow":"task"}
+{"event":"build_complete","outcome":"fail","ticket":"pun-aa6b","ts":"2026-02-26T17:30:27Z"}
