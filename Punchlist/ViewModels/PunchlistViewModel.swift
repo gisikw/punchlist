@@ -47,7 +47,6 @@ final class PunchlistViewModel {
     private var pollBurstUntil: Date = .distantPast
     private var connectionObserver: Task<Void, Never>?
     private var hasInitialLoad: Bool = false
-    private var hasHandledInitialSSE: Bool = false
 
     private var agentSessionKey: String {
         "agentSessionStartTime_\(currentProjectSlug)"
@@ -71,14 +70,7 @@ final class PunchlistViewModel {
 
         sse.start { [weak self] items in
             guard let self else { return }
-            // Skip the first SSE callback if REST fetch has already loaded data,
-            // to avoid race condition where SSE overwrites completed items on cold start.
-            // After skipping once, allow all subsequent SSE updates through.
-            if self.hasInitialLoad && !self.hasHandledInitialSSE {
-                self.hasHandledInitialSSE = true
-            } else {
-                self.items = self.filtered(items)
-            }
+            self.items = self.filtered(items)
             self.stopPolling()
             self.drainQueue()
             self.refreshAgentStatus()
@@ -159,9 +151,7 @@ final class PunchlistViewModel {
         currentProjectSlug = slug
         agentState = nil
 
-        // Reset initial load flags for the new project
         hasInitialLoad = false
-        hasHandledInitialSSE = false
 
         // Load session timestamp from UserDefaults for the new project
         let timestamp = UserDefaults.standard.double(forKey: agentSessionKey)

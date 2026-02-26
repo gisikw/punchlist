@@ -17,7 +17,7 @@ struct KoAPI {
     // MARK: - Items
 
     func fetchItems(project: String) async throws -> [Item] {
-        let output = try await run(["ls", "--project=\(project)", "--json"])
+        let output = try await run(["ls", "--project=\(project)", "--all", "--json"])
         return try JSONDecoder().decode([Item].self, from: output)
     }
 
