@@ -113,11 +113,14 @@ struct ContentView: View {
                     }
             }
 
-            if let agentState = viewModel.agentState,
-               agentState != .notProvisioned,
-               !viewModel.isPersonal,
+            if !viewModel.isPersonal,
                !showProjectPicker {
-                agentToggle(isRunning: agentState == .running)
+                if viewModel.hasReviewableSession {
+                    completionCircle
+                } else if let agentState = viewModel.agentState,
+                          agentState != .notProvisioned {
+                    agentToggle(isRunning: agentState == .running)
+                }
             }
         }
         .padding(.horizontal, 20)
@@ -142,6 +145,18 @@ struct ContentView: View {
         }
     }
 
+    private var completionCircle: some View {
+        Button {
+            viewModel.showCompletedFromSession.toggle()
+        } label: {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 22))
+                .foregroundStyle(Color.punchGreen)
+                .opacity(viewModel.showCompletedFromSession ? 0.6 : 1.0)
+                .animation(.easeInOut(duration: 0.2), value: viewModel.showCompletedFromSession)
+        }
+    }
+
     private var projectTag: String? {
         guard !viewModel.isPersonal else { return nil }
         guard let project = viewModel.currentProject else { return nil }
@@ -150,6 +165,10 @@ struct ContentView: View {
 
     private func dismissPicker() {
         expandedItemID = nil
+        // Clear session state for current project before switching to personal
+        if !viewModel.isPersonal {
+            viewModel.clearAgentSession()
+        }
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             showProjectPicker = false
         }

@@ -7,3 +7,20 @@ type: task
 priority: 2
 ---
 # I'd like to be able to see tickets that were completed during an agent run if it was started in punchlist. Maybe when an agent is started, we save a timestamp locally, and start showing completed tickets that were completed after that timestamp. When the agent stops, the slider is replaced with the completion circle? Clicking the completion circle restores the (inactive) agent slider, and hides all closed tickets. This was we get a "what happened during that loop" review process
+
+## Notes
+
+**2026-02-26 06:07:27 UTC:** Question: What visual treatment should the completion indicator use?
+Answer: Filled green circle with checkmark (Recommended)
+Matches completed item aesthetic, signals 'review completed work'
+
+**2026-02-26 06:07:27 UTC:** Question: How should the app handle items without a `modified` timestamp (older data)?
+Answer: Treat as missing (Recommended)
+Add `modified` as optional, filter gracefully when nil—these items won't appear in session-completed views
+
+**2026-02-26 06:07:27 UTC:** Question: Should the session timestamp persist across app restarts?
+Answer: This needs to persist. Agent runs ideally would start to last for multiple hours if we tee up work well
+
+**2026-02-26 06:08:00 UTC:** Question: If a user starts the agent twice without reviewing the first session, which tickets should be shown?
+Answer: Most recent session only (Recommended)
+Show only tickets completed after the second agent start; simpler mental model

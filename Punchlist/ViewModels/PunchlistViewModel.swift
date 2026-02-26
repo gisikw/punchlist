@@ -23,6 +23,12 @@ final class PunchlistViewModel {
 
     var isPersonal: Bool { currentProjectSlug == "user" }
     var agentState: KoAPI.AgentState?
+    var agentSessionStartTime: Date?
+    var showCompletedFromSession: Bool = false
+
+    var hasReviewableSession: Bool {
+        agentSessionStartTime != nil && agentState != .running
+    }
 
     private let api = KoAPI()
     private let sse = SSEManager()
@@ -32,6 +38,10 @@ final class PunchlistViewModel {
     private var pollTask: Task<Void, Never>?
     private var pollBurstUntil: Date = .distantPast
     private var connectionObserver: Task<Void, Never>?
+
+    private var agentSessionKey: String {
+        "agentSessionStartTime_\(currentProjectSlug)"
+    }
 
     func start() {
         startDate = Date()
@@ -120,6 +130,10 @@ final class PunchlistViewModel {
         guard slug != currentProjectSlug else { return }
         currentProjectSlug = slug
         agentState = nil
+
+        // Load session timestamp from UserDefaults for the new project
+        let timestamp = UserDefaults.standard.double(forKey: agentSessionKey)
+        agentSessionStartTime = timestamp > 0 ? Date(timeIntervalSince1970: timestamp) : nil
 
         // SSE is URL-scoped per project; reconnect to new stream
         sse.switchProject(slug)
@@ -225,6 +239,12 @@ final class PunchlistViewModel {
 
     // MARK: - Agent
 
+    func clearAgentSession() {
+        agentSessionStartTime = nil
+        showCompletedFromSession = false
+        UserDefaults.standard.removeObject(forKey: agentSessionKey)
+    }
+
     func toggleAgent() {
         guard !isPersonal, let state = agentState else { return }
         let slug = currentProjectSlug
@@ -237,6 +257,10 @@ final class PunchlistViewModel {
             case .notRunning:
                 if let newState = try? await api.agentStart(project: slug) {
                     self.agentState = newState
+                    // Save session start timestamp
+                    let now = Date()
+                    self.agentSessionStartTime = now
+                    UserDefaults.standard.set(now.timeIntervalSince1970, forKey: self.agentSessionKey)
                 }
             case .notProvisioned:
                 break
@@ -337,9 +361,28 @@ final class PunchlistViewModel {
     // MARK: - Filtering
 
     /// Personal shows all items; project views hide closed.
+    /// When showCompletedFromSession is true, include closed items modified after agentSessionStartTime.
     private func filtered(_ items: [Item]) -> [Item] {
         if isPersonal { return items }
-        return items.filter { !$0.done }
+
+        return items.filter { item in
+            if !item.done { return true }
+
+            // Include closed items from current session if review mode is active
+            guard showCompletedFromSession,
+                  let sessionStart = agentSessionStartTime,
+                  let modifiedString = item.modified else {
+                return false
+            }
+
+            // Parse ISO8601 timestamp and compare with session start
+            let formatter = ISO8601DateFormatter()
+            guard let modifiedDate = formatter.date(from: modifiedString) else {
+                return false
+            }
+
+            return modifiedDate >= sessionStart
+        }
     }
 
     // MARK: - Queue
