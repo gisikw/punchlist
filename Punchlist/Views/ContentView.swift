@@ -173,7 +173,7 @@ struct ContentView: View {
                             item: item,
                             isPersonal: viewModel.isPersonal,
                             isExpanded: expandedItemID == item.id,
-                            questions: viewModel.questionsForItem[item.id] ?? [],
+                            questions: item.planQuestions ?? [],
                             selections: selectionsBinding(for: item.id),
                             otherText: otherTextBinding(for: item.id),
                             onToggle: { viewModel.toggleItem(item) },
@@ -181,9 +181,6 @@ struct ContentView: View {
                             onExpand: {
                                 withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                                     expandedItemID = item.id
-                                }
-                                if item.status == "blocked" {
-                                    viewModel.fetchQuestions(for: item.id)
                                 }
                             },
                             onCollapse: {

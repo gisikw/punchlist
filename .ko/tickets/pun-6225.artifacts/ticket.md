@@ -1,13 +1,9 @@
 ---
 id: pun-6225
-status: closed
+status: open
 deps: []
 created: 2026-02-26T05:37:50Z
 type: task
 priority: 2
 ---
 # What does our testing story look like for this repository?
-
-## Notes
-
-**2026-02-26 05:54:58 UTC:** ko: SUCCEED
