@@ -1,11 +1,19 @@
-Based on the ticket title provided in your request: "Add XCTest target and test pure model decoding (Item, PlanQuestion, filtering)", this is clearly describing **what to build** - specifically, adding a testing infrastructure component and writing tests for model decoding.
+I'll review the ticket and classify it based on the instructions.
 
-The ticket describes:
-- A specific feature to add (XCTest target)
-- Specific code to test (pure model decoding, Item, PlanQuestion, filtering)
-- The expected outcome is code changes and test coverage
+Looking at the ticket: **"Add XCTest target and test pure model decoding (Item, PlanQuestion, filtering)"**
 
-This is a concrete buildable task, not a question or investigation.
+The ticket clearly describes:
+- **What to build**: An XCTest target
+- **Specific code to test**: Model decoding (Item, PlanQuestion, filtering logic)
+- **Expected outcome**: Code changes - new test target, test files with comprehensive tests
+
+This is a concrete buildable task with:
+- Clear requirements (add XCTest target, write specific tests)
+- Defined test coverage areas (model decoding, filtering logic)
+- A detailed implementation plan already provided
+- Expected verification steps (xcodebuild test commands)
+
+The ticket is **not** asking a question ("Can we do X?"), **not** reporting broken behavior ("This is broken"), and **not** requesting investigation ("What would it take?"). It's asserting what needs to be built.
 
 ```json
 {"disposition": "route", "workflow": "task"}

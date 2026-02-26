@@ -1,6 +1,6 @@
 ---
 id: pun-96d3
-status: open
+status: resolved
 deps: []
 created: 2026-02-26T15:32:35Z
 type: task
@@ -17,3 +17,5 @@ Make method internal and use @testable import Punchlist in tests; simplest and f
 **2026-02-26 15:38:28 UTC:** Question: Should the test suite be executable on remote build hosts via justfile, or is local test execution sufficient?
 Answer: Add remote test execution (Recommended)
 Create a `just test` command that executes tests on the remote build host, matching the CI workflow
+
+**2026-02-26 15:52:46 UTC:** ko: SUCCEED

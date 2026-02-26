@@ -8,3 +8,23 @@
 {"event":"node_start","node":"actionable","ticket":"pun-96d3","ts":"2026-02-26T15:35:47Z","workflow":"task"}
 {"event":"node_complete","node":"actionable","result":"needs_input","ticket":"pun-96d3","ts":"2026-02-26T15:36:04Z","workflow":"task"}
 {"event":"build_complete","outcome":"fail","ticket":"pun-96d3","ts":"2026-02-26T15:36:04Z"}
+{"event":"build_start","ticket":"pun-96d3","ts":"2026-02-26T15:44:54Z"}
+{"event":"workflow_start","ticket":"pun-96d3","ts":"2026-02-26T15:44:54Z","workflow":"main"}
+{"event":"node_start","node":"classify","ticket":"pun-96d3","ts":"2026-02-26T15:44:54Z","workflow":"main"}
+{"attempt":1,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-96d3","ts":"2026-02-26T15:48:08Z","workflow":"main"}
+{"attempt":2,"event":"node_retry","node":"classify","ticket":"pun-96d3","ts":"2026-02-26T15:48:08Z","workflow":"main"}
+{"attempt":2,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-96d3","ts":"2026-02-26T15:50:11Z","workflow":"main"}
+{"attempt":3,"event":"node_retry","node":"classify","ticket":"pun-96d3","ts":"2026-02-26T15:50:11Z","workflow":"main"}
+{"event":"node_complete","node":"classify","result":"route","ticket":"pun-96d3","ts":"2026-02-26T15:50:16Z","workflow":"main"}
+{"event":"workflow_start","ticket":"pun-96d3","ts":"2026-02-26T15:50:16Z","workflow":"task"}
+{"event":"node_start","node":"plan","ticket":"pun-96d3","ts":"2026-02-26T15:50:16Z","workflow":"task"}
+{"event":"node_complete","node":"plan","result":"done","ticket":"pun-96d3","ts":"2026-02-26T15:50:58Z","workflow":"task"}
+{"event":"node_start","node":"actionable","ticket":"pun-96d3","ts":"2026-02-26T15:50:58Z","workflow":"task"}
+{"event":"node_complete","node":"actionable","result":"continue","ticket":"pun-96d3","ts":"2026-02-26T15:51:12Z","workflow":"task"}
+{"event":"node_start","node":"implement","ticket":"pun-96d3","ts":"2026-02-26T15:51:12Z","workflow":"task"}
+{"event":"node_complete","node":"implement","result":"done","ticket":"pun-96d3","ts":"2026-02-26T15:51:54Z","workflow":"task"}
+{"event":"node_start","node":"verify","ticket":"pun-96d3","ts":"2026-02-26T15:51:54Z","workflow":"task"}
+{"event":"node_complete","node":"verify","result":"done","ticket":"pun-96d3","ts":"2026-02-26T15:51:56Z","workflow":"task"}
+{"event":"node_start","node":"review","ticket":"pun-96d3","ts":"2026-02-26T15:51:56Z","workflow":"task"}
+{"event":"node_complete","node":"review","result":"continue","ticket":"pun-96d3","ts":"2026-02-26T15:52:46Z","workflow":"task"}
+{"event":"build_complete","outcome":"succeed","ticket":"pun-96d3","ts":"2026-02-26T15:52:46Z"}

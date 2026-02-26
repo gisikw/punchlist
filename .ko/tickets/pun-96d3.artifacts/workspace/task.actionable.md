@@ -1,87 +1,37 @@
-Based on the prior context provided in your message, I can see the plan.md content. Let me evaluate it:
+Perfect. Let me evaluate this plan:
 
 ## Evaluation
 
 ### 1. Open Questions Section
-
-The plan explicitly lists **two open questions** that require human input:
-
-1. **Test execution in CI**: Whether to add a `just test` command for remote builds or only test locally
-2. **Filtering test approach**: How to test the private `filtered()` method (testable import, indirect testing, or extract to pure function)
-
-These are genuine architectural decisions that need clarification before implementation can proceed.
+✅ **No open questions** — The plan explicitly states "None" and notes that the user has already answered both previous questions (remote test execution approach and filtering test approach). The decisions have been made.
 
 ### 2. Completeness
+✅ **Goal**: Clear and concise — Make `filtered()` internal to enable test access via `@testable import`
 
-✅ **Goal**: Clear and concise - "Add an XCTest target to the Xcode project and implement unit tests for model decoding..."
+✅ **Context**: Comprehensive — Explains what's been completed (XCTest target, tests written, `just test` command) and identifies the blocker (implicit private access level on `filtered()`)
 
-✅ **Context**: Comprehensive. Covers model types with custom Codable implementations, filtering logic, and existing conventions.
+✅ **Approach**: Clear strategy — Change access level from implicit private to explicit internal
 
-✅ **Approach**: High-level strategy is clear.
-
-✅ **Tasks**: 5 ordered tasks with file references and verification steps:
-- Task 1: Add XCTest target (verification: Project opens in Xcode)
-- Task 2: Item decoding tests (verification: xcodebuild test passes)
-- Task 3: PlanQuestion tests (verification: All tests pass)
-- Task 4: Project tests (verification: All tests pass)
-- Task 5: Filtering tests (verification: All tests pass)
+✅ **Tasks**: Single, specific task with:
+- Exact file location and line number (PunchlistViewModel.swift:398)
+- Precise code change (add `internal` keyword)
+- Clear verification step (`just test` passes all tests)
 
 ### 3. Feasibility
+✅ All referenced components appear valid:
+- `PunchlistViewModel.swift` with `filtered()` method at line 398
+- XCTest target "PunchlistTests" already added
+- Test files (`PunchlistTests.swift`, `FilteringTests.swift`) already exist
+- `just test` command already implemented
+- The change is simple and low-risk (adding an access modifier)
 
-✅ All referenced files and patterns appear plausible:
-- `Punchlist.xcodeproj/project.pbxproj` (standard Xcode project structure)
-- Model types mentioned (Item, PlanQuestion, Project) with documented custom Codable implementations
-- INVARIANTS.md referenced and appears to exist
-- ViewModel with filtering logic exists
-- Justfile with build commands mentioned
-
-No red flags on feasibility.
-
----
+### 4. Decision Quality
+✅ The plan documents that:
+- Previous open questions have been answered by the user
+- The "@testable import" approach was the recommended choice
+- All prerequisite work (test infrastructure) is complete
+- Only the access level change remains
 
 ```json
-{
-  "disposition": "needs_input",
-  "plan_questions": [
-    {
-      "id": "q1",
-      "question": "Should the test suite be executable on remote build hosts via justfile, or is local test execution sufficient?",
-      "context": "The project uses remote macOS builds via SSH per INVARIANTS.md. The justfile currently has build/distribute commands but no test command.",
-      "options": [
-        {
-          "label": "Add remote test execution (Recommended)",
-          "value": "remote_test_command",
-          "description": "Create a `just test` command that executes tests on the remote build host, matching the CI workflow"
-        },
-        {
-          "label": "Local testing only",
-          "value": "local_testing",
-          "description": "Keep tests local for development; CI can run tests separately if needed"
-        }
-      ]
-    },
-    {
-      "id": "q2",
-      "question": "How should the private `filtered()` method in PunchlistViewModel be tested?",
-      "context": "The filtering logic is critical but currently private. Testing it requires choosing between exposing internals or testing indirectly.",
-      "options": [
-        {
-          "label": "Use @testable import (Recommended)",
-          "value": "testable_import",
-          "description": "Make method internal and use @testable import Punchlist in tests; simplest and follows Swift conventions"
-        },
-        {
-          "label": "Test through ViewModel public API",
-          "value": "indirect_testing",
-          "description": "Set up ViewModel state and verify the items array without directly calling filtered()"
-        },
-        {
-          "label": "Extract to pure function",
-          "value": "pure_function",
-          "description": "Move filtering logic to a standalone testable function separate from ViewModel"
-        }
-      ]
-    }
-  ]
-}
+{"disposition": "continue"}
 ```

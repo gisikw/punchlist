@@ -13,8 +13,10 @@ default:
     @just --list
 
 # Run the test suite
-test:
-    echo "no tests configured — builds are validated via xcodebuild on the build host"
+test: sync
+    #!/usr/bin/env bash
+    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+      'cd {{remote_dir}} && xcodebuild test -project {{project}} -scheme PunchlistTests -sdk iphonesimulator -destination \"platform=iOS Simulator,name={{simulator}}\" 2>&1 | tail -50'"
 
 # Sync source to build host
 sync:

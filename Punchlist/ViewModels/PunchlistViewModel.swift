@@ -395,7 +395,7 @@ final class PunchlistViewModel {
 
     /// Personal shows all items; project views hide closed.
     /// When showCompletedFromSession is true, include closed items modified after agentSessionStartTime.
-    private func filtered(_ items: [Item]) -> [Item] {
+    internal func filtered(_ items: [Item]) -> [Item] {
         if isPersonal { return items }
 
         return items.filter { item in
