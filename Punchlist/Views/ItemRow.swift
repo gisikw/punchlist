@@ -26,6 +26,10 @@ struct ItemRow: View {
         item.status == "blocked"
     }
 
+    private var isResolved: Bool {
+        item.status == "resolved"
+    }
+
     private var hasUnresolvedDep: Bool {
         item.hasUnresolvedDep == true
     }
@@ -227,6 +231,7 @@ struct ItemRow: View {
 
     private var circleColor: Color {
         if item.done { return .punchGreen }
+        if isResolved { return .punchGreen }
         if isBlocked { return .punchPink }
         if isInProgress { return .punchBlue }
         if hasUnresolvedDep { return .punchOrange }
@@ -247,7 +252,7 @@ struct ItemRow: View {
                 .strokeBorder(circleColor, lineWidth: 2)
                 .frame(width: 22, height: 22)
 
-            if item.done {
+            if item.done || isResolved {
                 Circle()
                     .fill(Color.punchGreen)
                     .frame(width: 22, height: 22)
