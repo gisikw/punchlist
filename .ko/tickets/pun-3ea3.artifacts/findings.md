@@ -1,16 +1,4 @@
----
-id: pun-3ea3
-status: resolved
-deps: []
-created: 2026-02-26T17:30:20Z
-type: task
-priority: 2
----
-# Some recently blocked tickets are pulsing - it's an interesting idea actually if we use it with intent, but it's accidental right now. Where's that coming from?
-
-## Notes
-
-**2026-02-26 17:31:48 UTC:** # Findings: Pulsing Effect on Blocked Tickets
+# Findings: Pulsing Effect on Blocked Tickets
 
 ## Summary
 
@@ -149,5 +137,3 @@ The current implementation mostly achieves this, but the transient state issue c
 - The accent colors are correct: pink for blocked (`.punchPink`), blue for in_progress (`.punchBlue`)
 - The circle indicator also scales with the pulse (line 266), which is correctly gated by `hasPulse`
 - The issue is subtle and only visible during state transitions, which is why it appears as "recently blocked tickets are pulsing"
-
-**2026-02-26 17:31:48 UTC:** ko: SUCCEED

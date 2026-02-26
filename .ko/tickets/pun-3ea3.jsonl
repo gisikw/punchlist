@@ -1,0 +1,8 @@
+{"event":"build_start","ticket":"pun-3ea3","ts":"2026-02-26T17:30:27Z"}
+{"event":"workflow_start","ticket":"pun-3ea3","ts":"2026-02-26T17:30:27Z","workflow":"main"}
+{"event":"node_start","node":"classify","ticket":"pun-3ea3","ts":"2026-02-26T17:30:27Z","workflow":"main"}
+{"event":"node_complete","node":"classify","result":"route","ticket":"pun-3ea3","ts":"2026-02-26T17:30:32Z","workflow":"main"}
+{"event":"workflow_start","ticket":"pun-3ea3","ts":"2026-02-26T17:30:32Z","workflow":"research"}
+{"event":"node_start","node":"investigate","ticket":"pun-3ea3","ts":"2026-02-26T17:30:32Z","workflow":"research"}
+{"event":"node_complete","node":"investigate","result":"done","ticket":"pun-3ea3","ts":"2026-02-26T17:31:48Z","workflow":"research"}
+{"event":"build_complete","outcome":"succeed","ticket":"pun-3ea3","ts":"2026-02-26T17:31:48Z"}
