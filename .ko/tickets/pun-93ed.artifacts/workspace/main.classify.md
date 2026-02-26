@@ -1,21 +1,31 @@
-Looking at this ticket:
+I'll classify this ticket by reading it carefully without investigating the codebase.
 
-**Ticket Summary:**
-- When a large ticket is expanded and then collapsed, the tickets can seemingly disappear from view
-- Scrolling eventually recovers them
-- The issue is that the container doesn't shrink after the item card closes
-- The proposal is to nudge the container to resize when an item card closes
+**Ticket Analysis:**
 
-**Analysis:**
+The ticket title states: "If there's a large ticket expanded, on collapse the tickets can seemingly disappear because the container doesn't shrink."
 
-This ticket describes an unexpected behavior (tickets disappearing visually after collapsing) with a proposed solution (container resizing on close). The core problem statement is "tickets can seemingly disappear because the container doesn't shrink" — this is asserting that there's a broken behavior.
+Key observations:
+1. **What's being reported:** Unexpected behavior where tickets visually disappear after a large ticket collapses
+2. **Root cause identified:** "the container doesn't shrink" — this is a diagnosis of the problem
+3. **Proposed solution:** "can we nudge the container to resize on item card close maybe?" — this is a specific fix direction
+4. **Verification method:** "Scrolling eventually recovers them" — confirms this is a visual/layout issue, not data loss
 
-However, the ticket also includes a clear diagnostic understanding of the root cause (container not shrinking) and a specific fix direction (nudge the container to resize on item card close). This moves it closer to a task classification.
+**Classification Reasoning:**
 
-**Decision:**
+The ticket is **asserting broken behavior** ("tickets can seemingly disappear because the container doesn't shrink") rather than asking whether something is a problem. It includes:
+- A specific symptom (tickets disappear)
+- A diagnosed root cause (container not shrinking)
+- A proposed fix (nudge container to resize)
 
-Despite having some diagnostic clarity, the primary nature of this ticket is reporting unexpected behavior. The fact that "scrolling eventually recovers them" indicates a visual/layout issue that needs diagnosis before implementation. While the suggested fix seems reasonable, the ticket is fundamentally asserting "this is broken" rather than describing "build this feature."
+However, the prior context shows:
+- A detailed plan has already been developed (plan.md exists with specific tasks)
+- The fix direction is clear (use `ScrollViewReader` to scroll to collapsed item)
+- Implementation strategy is documented
+
+This transitions the ticket from "bug needing diagnosis" to "task with clear implementation path." The prior plan document explicitly describes the code changes needed in `ContentView.swift` and `ItemRow.swift`.
+
+Given the comprehensive plan and clear implementation strategy already documented, this is now a **task** — the work is to execute the planned code changes.
 
 ```json
-{"disposition": "route", "workflow": "bug"}
+{"disposition": "route", "workflow": "task"}
 ```

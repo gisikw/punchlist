@@ -207,6 +207,12 @@ struct ContentView: View {
                                 withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                                     expandedItemID = nil
                                 }
+                                // Scroll to the collapsed item after the animation completes
+                                // to force the ScrollView to recalculate its content size
+                                Task { @MainActor in
+                                    try? await Task.sleep(for: .milliseconds(350))
+                                    proxy.scrollTo(item.id, anchor: .bottom)
+                                }
                             }
                         )
                         .id(item.id)

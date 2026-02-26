@@ -11,7 +11,7 @@ The collapse animation is triggered with `withAnimation(.spring(response: 0.35, 
 SwiftUI's `ScrollView` with bottom anchoring (`.defaultScrollAnchor(.bottom)` at line 218) should maintain the bottom-anchored position, but when content shrinks rapidly during collapse, the scroll offset can become stale.
 
 ## Approach
-Use `ScrollViewReader`'s `scrollTo` method to explicitly scroll to a stable anchor point after collapse completes. When an item collapses, we'll scroll to either the bottom-most item or to the item that just collapsed, ensuring the viewport adjusts to the new content height. This will be timed to align with the collapse animation duration (0.35s spring).
+Use `ScrollViewReader`'s `scrollTo` method to explicitly scroll to the collapsed item after collapse completes. When an item collapses, we'll call `scrollTo(item.id, anchor: .bottom)` to keep the collapsed item visible while forcing the viewport to adjust to the new content height. This will be timed to align with the collapse animation duration (0.35s spring).
 
 ## Tasks
 1. [Punchlist/Views/ContentView.swift:204-209] — Modify the `onCollapse` callback to accept the `ScrollViewReader`'s `proxy` parameter and call `proxy.scrollTo(item.id, anchor: .bottom)` after the collapse animation to force the scroll position to recalculate.
@@ -24,4 +24,4 @@ Use `ScrollViewReader`'s `scrollTo` method to explicitly scroll to a stable anch
    Verify: Build succeeds, no compilation errors.
 
 ## Open Questions
-Should we scroll to the collapsed item itself or to the bottom of the list? Scrolling to the collapsed item keeps it visible and centered, which feels more stable. Scrolling to bottom maintains the "bottom-anchored" philosophy but might feel jarring if the collapsed item was in the middle of the viewport. **Recommendation: scroll to the collapsed item with `.bottom` anchor** — this keeps it visible while allowing the container to resize properly.
+None. The decision to scroll to the collapsed item (with `.bottom` anchor) has been confirmed — this keeps the item visible while properly resizing the container.
