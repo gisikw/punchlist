@@ -63,8 +63,8 @@ final class SSEManager {
         let attempt = connectCount
         log("connect #\(attempt) → \(currentProjectSlug)")
 
-        // URL: /subscribe/%23{slug} (# is URL-encoded as %23)
-        let url = baseURL.appendingPathComponent("subscribe/%23\(currentProjectSlug)")
+        // URL: /subscribe/#slug — construct from string to avoid double-encoding
+        let url = URL(string: "\(baseURL.absoluteString)/subscribe/%23\(currentProjectSlug)")!
         var request = URLRequest(url: url)
         request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
         request.timeoutInterval = .infinity

@@ -88,7 +88,7 @@ struct KoAPI {
     // MARK: - Transport
 
     private func run(_ argv: [String]) async throws -> Data {
-        let endpoint = baseURL.appendingPathComponent("ko")
+        let endpoint = URL(string: "\(baseURL.absoluteString)/ko")!
         var request = URLRequest(url: endpoint)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -108,7 +108,13 @@ struct KoAPI {
     }
 
     private struct AgentStatusResponse: Decodable {
-        let state: AgentState
+        let provisioned: Bool
+        let running: Bool
+
+        var state: AgentState {
+            if !provisioned { return .notProvisioned }
+            return running ? .running : .notRunning
+        }
     }
 
     private struct ShowResponse: Decodable {

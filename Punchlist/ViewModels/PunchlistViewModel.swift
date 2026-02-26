@@ -26,7 +26,7 @@ final class PunchlistViewModel {
 
     private let api = KoAPI()
     private let sse = SSEManager()
-    private var startDate: Date = .distantPast
+    private var startDate: Date = Date()
     private var pendingQueue: [() async -> Void] = []
     private var agentPollTask: Task<Void, Never>?
     private var pollTask: Task<Void, Never>?
@@ -37,7 +37,7 @@ final class PunchlistViewModel {
         startDate = Date()
         sse.start { [weak self] items in
             guard let self else { return }
-            self.items = items
+            self.items = self.filtered(items)
             self.stopPolling()
             self.drainQueue()
             self.refreshAgentStatus()
@@ -59,7 +59,7 @@ final class PunchlistViewModel {
 
             // Fetch items for personal (user) project via REST as initial load
             if let fetched = try? await api.fetchItems(project: "user") {
-                self.items = fetched
+                self.items = self.filtered(fetched)
             }
         }
     }
@@ -75,7 +75,7 @@ final class PunchlistViewModel {
         let slug = currentProjectSlug
         Task {
             if let fetched = try? await api.fetchItems(project: slug) {
-                self.items = fetched
+                self.items = self.filtered(fetched)
             }
         }
         refreshAgentStatus()
@@ -99,7 +99,7 @@ final class PunchlistViewModel {
         // Also fetch via REST for immediate display
         Task {
             if let fetched = try? await api.fetchItems(project: slug) {
-                self.items = fetched
+                self.items = self.filtered(fetched)
             }
         }
 
@@ -294,7 +294,7 @@ final class PunchlistViewModel {
                 if s.isConnected { break }
                 let slug = s.currentProjectSlug
                 if let fetched = try? await s.api.fetchItems(project: slug) {
-                    s.items = fetched
+                    s.items = s.filtered(fetched)
                 }
             }
             self?.pollTask = nil
@@ -304,6 +304,14 @@ final class PunchlistViewModel {
     private func stopPolling() {
         pollTask?.cancel()
         pollTask = nil
+    }
+
+    // MARK: - Filtering
+
+    /// Personal shows all items; project views hide closed.
+    private func filtered(_ items: [Item]) -> [Item] {
+        if isPersonal { return items }
+        return items.filter { !$0.done }
     }
 
     // MARK: - Queue
