@@ -1,6 +1,6 @@
 ---
 id: pun-43d8
-status: resolved
+status: closed
 deps: []
 created: 2026-02-26T15:40:38Z
 type: task

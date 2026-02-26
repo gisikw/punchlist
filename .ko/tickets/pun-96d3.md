@@ -1,6 +1,6 @@
 ---
 id: pun-96d3
-status: resolved
+status: closed
 deps: []
 created: 2026-02-26T15:32:35Z
 type: task

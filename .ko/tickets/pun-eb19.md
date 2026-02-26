@@ -1,6 +1,6 @@
 ---
 id: pun-eb19
-status: blocked
+status: closed
 deps: []
 created: 2026-02-26T05:36:56Z
 type: task
