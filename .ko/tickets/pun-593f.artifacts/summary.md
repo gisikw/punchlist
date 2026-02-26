@@ -1,16 +1,4 @@
----
-id: pun-593f
-status: resolved
-deps: []
-created: 2026-02-26T20:20:41Z
-type: task
-priority: 2
----
-# Right now we're hiding the agent if there are no tickets that aren't blocked or done. We should also hide if the only ones left are resolved - those are not agent-actionable
-
-## Notes
-
-**2026-02-26 20:31:16 UTC:** # Summary
+# Summary
 
 ## What Was Done
 
@@ -57,5 +45,3 @@ For future reference, the complete set of ticket states and their agent-actionab
 - `done: true` (status "closed") - ticket is completed
 
 The `hasUnblockedTickets` property now correctly identifies only tickets the agent can act upon.
-
-**2026-02-26 20:31:16 UTC:** ko: SUCCEED

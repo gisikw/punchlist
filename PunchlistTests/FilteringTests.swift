@@ -211,4 +211,68 @@ final class FilteringTests: XCTestCase {
 
         XCTAssertTrue(filtered.isEmpty)
     }
+
+    func testHasUnblockedTicketsExcludesResolved() {
+        let vm = makeViewModel()
+
+        // Only resolved tickets — agent should hide
+        vm.items = [
+            Item(id: "1", text: "Resolved ticket", done: false, created: "2025-01-01T10:00:00Z", status: "resolved"),
+            Item(id: "2", text: "Another resolved", done: false, created: "2025-01-01T10:00:00Z", status: "resolved"),
+        ]
+
+        XCTAssertFalse(vm.hasUnblockedTickets, "Resolved tickets should not count as unblocked")
+
+        // Mix of resolved and blocked — agent should still hide
+        vm.items = [
+            Item(id: "1", text: "Resolved", done: false, created: "2025-01-01T10:00:00Z", status: "resolved"),
+            Item(id: "2", text: "Blocked", done: false, created: "2025-01-01T10:00:00Z", status: "blocked"),
+        ]
+
+        XCTAssertFalse(vm.hasUnblockedTickets, "Mix of resolved and blocked should not count as having unblocked tickets")
+
+        // Mix of resolved, blocked, and done — agent should still hide
+        vm.items = [
+            Item(id: "1", text: "Resolved", done: false, created: "2025-01-01T10:00:00Z", status: "resolved"),
+            Item(id: "2", text: "Blocked", done: false, created: "2025-01-01T10:00:00Z", status: "blocked"),
+            Item(id: "3", text: "Done", done: true, created: "2025-01-01T10:00:00Z", status: "closed"),
+        ]
+
+        XCTAssertFalse(vm.hasUnblockedTickets, "Only non-actionable tickets should result in no unblocked tickets")
+    }
+
+    func testHasUnblockedTicketsIncludesInProgress() {
+        let vm = makeViewModel()
+
+        // In-progress tickets — agent should show
+        vm.items = [
+            Item(id: "1", text: "In progress", done: false, created: "2025-01-01T10:00:00Z", status: "in_progress"),
+        ]
+
+        XCTAssertTrue(vm.hasUnblockedTickets, "In-progress tickets should count as unblocked")
+
+        // Open tickets — agent should show
+        vm.items = [
+            Item(id: "1", text: "Open ticket", done: false, created: "2025-01-01T10:00:00Z", status: "open"),
+        ]
+
+        XCTAssertTrue(vm.hasUnblockedTickets, "Open tickets should count as unblocked")
+
+        // Mix of in_progress and resolved — agent should show (has actionable work)
+        vm.items = [
+            Item(id: "1", text: "In progress", done: false, created: "2025-01-01T10:00:00Z", status: "in_progress"),
+            Item(id: "2", text: "Resolved", done: false, created: "2025-01-01T10:00:00Z", status: "resolved"),
+        ]
+
+        XCTAssertTrue(vm.hasUnblockedTickets, "Mix with in_progress should count as having unblocked tickets")
+
+        // Mix of open, blocked, and done — agent should show (has actionable work)
+        vm.items = [
+            Item(id: "1", text: "Open", done: false, created: "2025-01-01T10:00:00Z", status: "open"),
+            Item(id: "2", text: "Blocked", done: false, created: "2025-01-01T10:00:00Z", status: "blocked"),
+            Item(id: "3", text: "Done", done: true, created: "2025-01-01T10:00:00Z", status: "closed"),
+        ]
+
+        XCTAssertTrue(vm.hasUnblockedTickets, "Open tickets should count even with blocked and done tickets present")
+    }
 }

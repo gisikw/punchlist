@@ -35,7 +35,7 @@ final class PunchlistViewModel {
     }
 
     var hasUnblockedTickets: Bool {
-        items.contains { !$0.done && $0.status != "blocked" }
+        items.contains { !$0.done && $0.status != "blocked" && $0.status != "resolved" }
     }
 
     private let api = KoAPI()
