@@ -34,6 +34,10 @@ final class PunchlistViewModel {
         agentSessionStartTime != nil && agentState != .running
     }
 
+    var hasUnblockedTickets: Bool {
+        items.contains { !$0.done && $0.status != "blocked" }
+    }
+
     private let api = KoAPI()
     private let sse = SSEManager()
     private var startDate: Date = Date()

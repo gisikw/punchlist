@@ -15,24 +15,24 @@ default:
 # Run the test suite
 test: sync
     #!/usr/bin/env bash
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && xcodebuild test -project {{project}} -scheme PunchlistTests -sdk iphonesimulator -destination \"platform=iOS Simulator,name={{simulator}}\" 2>&1 | tail -50'"
 
 # Sync source to build host
 sync:
     #!/usr/bin/env bash
-    nix-shell -p sshpass rsync --run "sshpass -p '$BUILD_PASS' rsync -avz --exclude='.git' --exclude='.tickets' --exclude='.env' --exclude='.ko' . $BUILD_USER@$BUILD_HOST:{{remote_dir}}/"
+    nix shell nixpkgs#sshpass nixpkgs#rsync --command bash -c "sshpass -p '$BUILD_PASS' rsync -avz --exclude='.git' --exclude='.tickets' --exclude='.env' --exclude='.ko' . $BUILD_USER@$BUILD_HOST:{{remote_dir}}/"
 
 # Build for iOS simulator
 build: sync
     #!/usr/bin/env bash
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && xcodebuild -project {{project}} -scheme {{scheme}} -sdk iphonesimulator -destination \"platform=iOS Simulator,name={{simulator}}\" build 2>&1 | tail -20'"
 
 # Build for device (release)
 build-device: sync
     #!/usr/bin/env bash
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && xcodebuild -project {{project}} -scheme {{scheme}} -sdk iphoneos -configuration Release build 2>&1 | tail -20'"
 
 # Archive for ad-hoc distribution
@@ -69,10 +69,10 @@ archive: sync
     </plist>
     EOF
 
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' scp -o StrictHostKeyChecking=no -o PreferredAuthentications=password $TMPDIR/ExportOptions.plist $BUILD_USER@$BUILD_HOST:/tmp/ExportOptions.plist"
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' scp -o StrictHostKeyChecking=no -o PreferredAuthentications=password $TMPDIR/ExportOptions.plist $BUILD_USER@$BUILD_HOST:/tmp/ExportOptions.plist"
 
     echo "=== Archiving ==="
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && rm -rf {{archive_path}} {{export_path}} && \
        security unlock-keychain -p build ~/Library/Keychains/build.keychain-db && \
        xcodebuild archive \
@@ -88,7 +88,7 @@ archive: sync
          2>&1 | tail -30'"
 
     echo "=== Exporting IPA ==="
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'security unlock-keychain -p build ~/Library/Keychains/build.keychain-db && \
        xcodebuild -exportArchive \
          -archivePath {{archive_path}} \
@@ -105,7 +105,7 @@ distribute: archive
     trap "rm -rf $TMPDIR" EXIT
 
     # Pull IPA from build host
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' scp -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST:{{export_path}}/{{app_name}}.ipa $TMPDIR/{{app_name}}.ipa"
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' scp -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST:{{export_path}}/{{app_name}}.ipa $TMPDIR/{{app_name}}.ipa"
 
     # Generate manifest plist
     cat > "$TMPDIR/{{app_name}}.plist" <<EOF
@@ -159,7 +159,7 @@ install:
 # Clean build artifacts on build host
 clean:
     #!/usr/bin/env bash
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && xcodebuild -project {{project}} -scheme {{scheme}} clean 2>&1'"
 
 # Post-agent-session: push and distribute
@@ -170,5 +170,5 @@ agent-session-complete:
 # Type-check Swift files without full build
 check: sync
     #!/usr/bin/env bash
-    nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && swiftc -typecheck -sdk \$(xcrun --sdk iphonesimulator --show-sdk-path) -target arm64-apple-ios17.0-simulator Punchlist/**/*.swift 2>&1'"

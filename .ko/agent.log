@@ -21,3 +21,5 @@ loop: building pun-d645 — Personal view hides completed tasks on cold start, s
 loop: building pun-43d8 — The top checkbox for when an agent is done, that needs to go away on tap. Right now, tapping it dims it but doesn't do anything. Aside from clearing the indicator, it doesn't need to close any tickets or anything for now.
 loop: pun-43d8 SUCCEED
 loop: building pun-96d3 — Add XCTest target and test pure model decoding (Item, PlanQuestion, filtering)
+{"blocked":0,"decomposed":0,"failed":4,"runtime_seconds":1024.594193362,"stop_reason":"empty","succeeded":2,"tickets_processed":6,"ts":"2026-02-26T17:36:56Z"}
+loop: building pun-41b2 — Let's hide the agent toggle if there are no unblocked tickets

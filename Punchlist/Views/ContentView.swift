@@ -118,7 +118,8 @@ struct ContentView: View {
                 if viewModel.hasReviewableSession {
                     completionCircle
                 } else if let agentState = viewModel.agentState,
-                          agentState != .notProvisioned {
+                          agentState != .notProvisioned,
+                          viewModel.hasUnblockedTickets {
                     agentToggle(isRunning: agentState == .running)
                 }
             }

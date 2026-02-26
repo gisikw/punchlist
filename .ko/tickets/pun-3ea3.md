@@ -1,6 +1,6 @@
 ---
 id: pun-3ea3
-status: resolved
+status: closed
 deps: []
 created: 2026-02-26T17:30:20Z
 type: task
