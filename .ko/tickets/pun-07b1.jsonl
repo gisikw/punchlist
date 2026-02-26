@@ -27,3 +27,13 @@
 {"attempt":3,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-07b1","ts":"2026-02-26T19:20:46Z","workflow":"main"}
 {"event":"node_complete","node":"classify","result":"error","ticket":"pun-07b1","ts":"2026-02-26T19:20:46Z","workflow":"main"}
 {"event":"build_complete","outcome":"fail","ticket":"pun-07b1","ts":"2026-02-26T19:20:46Z"}
+{"event":"build_start","ticket":"pun-07b1","ts":"2026-02-26T20:21:55Z"}
+{"event":"workflow_start","ticket":"pun-07b1","ts":"2026-02-26T20:21:55Z","workflow":"main"}
+{"event":"node_start","node":"classify","ticket":"pun-07b1","ts":"2026-02-26T20:21:55Z","workflow":"main"}
+{"attempt":1,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-07b1","ts":"2026-02-26T20:22:44Z","workflow":"main"}
+{"attempt":2,"event":"node_retry","node":"classify","ticket":"pun-07b1","ts":"2026-02-26T20:22:44Z","workflow":"main"}
+{"attempt":2,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-07b1","ts":"2026-02-26T20:23:05Z","workflow":"main"}
+{"attempt":3,"event":"node_retry","node":"classify","ticket":"pun-07b1","ts":"2026-02-26T20:23:05Z","workflow":"main"}
+{"attempt":3,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-07b1","ts":"2026-02-26T20:23:24Z","workflow":"main"}
+{"event":"node_complete","node":"classify","result":"error","ticket":"pun-07b1","ts":"2026-02-26T20:23:24Z","workflow":"main"}
+{"event":"build_complete","outcome":"fail","ticket":"pun-07b1","ts":"2026-02-26T20:23:24Z"}
