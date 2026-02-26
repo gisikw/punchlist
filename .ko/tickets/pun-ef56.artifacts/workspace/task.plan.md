@@ -1,9 +1,9 @@
-Perfect! I've created a plan to make the in_progress animation more noticeable. The plan focuses on:
+The plan has been updated to reflect that the open question about animation duration has been resolved. The user chose to keep the 2.0s duration and proceed with just the opacity and scale changes.
 
-1. **Increasing shadow opacity contrast** (from 0.06-0.18 to 0.03-0.28) to make the glow more dramatic
-2. **Increasing circle fill opacity contrast** (from 0.1-0.25 to 0.15-0.4) to make the breathing dot more obvious
-3. **Adding a subtle scale animation** to the circle (1.0 to 1.08) to create a gentle growing/shrinking effect
+**Plan Summary:**
+- **Shadow opacity**: 0.06-0.18 → 0.03-0.28 (stronger contrast)
+- **Circle fill opacity**: 0.1-0.25 → 0.15-0.4 (more dramatic breathing dot)
+- **Add scale effect**: 1.0 to 1.08 on the circle to create gentle growing/shrinking
+- **Duration**: Keep at 2.0s (user confirmed)
 
-The approach respects the constraint from the previous fix (pun-36ad) that prevents changing shadow radius to avoid scroll oscillation. It keeps the 2-second easeInOut animation for a calm breathing quality while making it much more visually prominent.
-
-The plan is ready for review at `.ko/tickets/pun-ef56.artifacts/plan.md`.
+The plan respects the pun-36ad constraint (no shadow radius changes) and provides concrete verification steps for each task. Ready for implementation.

@@ -34,4 +34,4 @@ Keep the 2-second duration and easeInOut timing to maintain the calm "breathing"
    Verify: Animation is obviously visible without being distracting; no scroll bounce; other statuses unaffected.
 
 ## Open Questions
-Should we also increase the animation duration slightly (e.g., 2.0s → 2.5s) to make the breathing more languid and noticeable? The current 2-second cycle might be fast enough that the increased contrast alone is sufficient, but a slower cycle could make it even more obvious. Probably fine to start with just the opacity and scale changes.
+None. User confirmed keeping 2.0s animation duration and proceeding with opacity and scale changes only.
