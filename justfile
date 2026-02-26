@@ -162,6 +162,11 @@ clean:
     nix-shell -p sshpass --run "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && xcodebuild -project {{project}} -scheme {{scheme}} clean 2>&1'"
 
+# Post-agent-session: push and distribute
+agent-session-complete:
+    git push
+    just distribute
+
 # Type-check Swift files without full build
 check: sync
     #!/usr/bin/env bash
