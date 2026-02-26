@@ -1,0 +1,10 @@
+{"event":"build_start","ticket":"pun-3247","ts":"2026-02-26T06:03:42Z"}
+{"event":"workflow_start","ticket":"pun-3247","ts":"2026-02-26T06:03:42Z","workflow":"main"}
+{"event":"node_start","node":"classify","ticket":"pun-3247","ts":"2026-02-26T06:03:42Z","workflow":"main"}
+{"event":"node_complete","node":"classify","result":"route","ticket":"pun-3247","ts":"2026-02-26T06:03:47Z","workflow":"main"}
+{"event":"workflow_start","ticket":"pun-3247","ts":"2026-02-26T06:03:47Z","workflow":"task"}
+{"event":"node_start","node":"plan","ticket":"pun-3247","ts":"2026-02-26T06:03:47Z","workflow":"task"}
+{"event":"node_complete","node":"plan","result":"done","ticket":"pun-3247","ts":"2026-02-26T06:05:27Z","workflow":"task"}
+{"event":"node_start","node":"actionable","ticket":"pun-3247","ts":"2026-02-26T06:05:27Z","workflow":"task"}
+{"event":"node_complete","node":"actionable","result":"needs_input","ticket":"pun-3247","ts":"2026-02-26T06:05:40Z","workflow":"task"}
+{"event":"build_complete","outcome":"fail","ticket":"pun-3247","ts":"2026-02-26T06:05:40Z"}
