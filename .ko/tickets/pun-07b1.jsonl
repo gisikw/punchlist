@@ -17,3 +17,13 @@
 {"attempt":3,"event":"node_fail","node":"verify","reason":"command failed: exit status 1\nerror:\n       … while calling the 'import' builtin\n         at «string»:1:18:\n            1| {...}@args: with import \u003cnixpkgs\u003e args; (pkgs.runCommandCC or pkgs.runCommand) \"shell\" { buildInputs = [ (sshpass) (rsync) ]; } \"\"\n             |                  ^\n\n       … while realising the context of a path\n\n       … while calling the 'findFile' builtin\n         at «string»:1:25:\n            1| {...}@args: with import \u003cnixpkgs\u003e args; (pkgs.runCommandCC or pkgs.runCommand) \"shell\" { buildInputs = [ (sshpass) (rsync) ]; } \"\"\n             |                         ^\n\n       error: file 'nixpkgs' was not found in the Nix search path (add it using $NIX_PATH or -I)\nerror: Recipe `sync` failed with exit code 1\n","ticket":"pun-07b1","ts":"2026-02-26T17:29:11Z","workflow":"task"}
 {"event":"node_complete","node":"verify","result":"error","ticket":"pun-07b1","ts":"2026-02-26T17:29:11Z","workflow":"task"}
 {"event":"build_complete","outcome":"fail","ticket":"pun-07b1","ts":"2026-02-26T17:29:11Z"}
+{"event":"build_start","ticket":"pun-07b1","ts":"2026-02-26T19:19:13Z"}
+{"event":"workflow_start","ticket":"pun-07b1","ts":"2026-02-26T19:19:13Z","workflow":"main"}
+{"event":"node_start","node":"classify","ticket":"pun-07b1","ts":"2026-02-26T19:19:13Z","workflow":"main"}
+{"attempt":1,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-07b1","ts":"2026-02-26T19:20:10Z","workflow":"main"}
+{"attempt":2,"event":"node_retry","node":"classify","ticket":"pun-07b1","ts":"2026-02-26T19:20:10Z","workflow":"main"}
+{"attempt":2,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-07b1","ts":"2026-02-26T19:20:24Z","workflow":"main"}
+{"attempt":3,"event":"node_retry","node":"classify","ticket":"pun-07b1","ts":"2026-02-26T19:20:24Z","workflow":"main"}
+{"attempt":3,"event":"node_fail","node":"classify","reason":"no fenced JSON block found in output","ticket":"pun-07b1","ts":"2026-02-26T19:20:46Z","workflow":"main"}
+{"event":"node_complete","node":"classify","result":"error","ticket":"pun-07b1","ts":"2026-02-26T19:20:46Z","workflow":"main"}
+{"event":"build_complete","outcome":"fail","ticket":"pun-07b1","ts":"2026-02-26T19:20:46Z"}
