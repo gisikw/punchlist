@@ -1,6 +1,6 @@
 ---
 id: pun-e67b
-status: open
+status: closed
 deps: [pun-f4a1]
 created: 2026-02-24T14:59:19Z
 type: task

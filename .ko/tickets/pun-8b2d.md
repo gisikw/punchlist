@@ -1,6 +1,6 @@
 ---
 id: pun-8b2d
-status: open
+status: closed
 deps: [pun-6a33]
 created: 2026-02-25T23:48:22Z
 type: task
