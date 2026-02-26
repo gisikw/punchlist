@@ -35,6 +35,10 @@ final class PunchlistViewModel {
 
     func start() {
         startDate = Date()
+
+        // Populate with default "user" project immediately to prevent empty drawer
+        projects = [Project(slug: "user", name: "user", isDefault: true)]
+
         sse.start { [weak self] items in
             guard let self else { return }
             self.items = self.filtered(items)
@@ -49,7 +53,21 @@ final class PunchlistViewModel {
         observeConnection()
 
         Task {
-            if let fetched = try? await api.fetchProjects() {
+            // Retry logic with exponential backoff for project fetch
+            var fetched: [Project]?
+            let retryDelays: [TimeInterval] = [0.5, 1.0, 2.0]
+            for (attempt, delay) in [(0, 0.0)] + retryDelays.enumerated().map({ ($0.offset + 1, $0.element) }) {
+                do {
+                    fetched = try await api.fetchProjects()
+                    break
+                } catch {
+                    if attempt < retryDelays.count {
+                        try? await Task.sleep(for: .seconds(delay))
+                    }
+                }
+            }
+
+            if let fetched {
                 self.projects = fetched.sorted { a, b in
                     if a.slug == "user" { return true }
                     if b.slug == "user" { return false }
@@ -75,6 +93,15 @@ final class PunchlistViewModel {
         sse.reconnect()
         let slug = currentProjectSlug
         Task {
+            // Re-fetch projects to recover from initial load failures
+            if let fetched = try? await api.fetchProjects() {
+                self.projects = fetched.sorted { a, b in
+                    if a.slug == "user" { return true }
+                    if b.slug == "user" { return false }
+                    return a.slug < b.slug
+                }
+            }
+
             if let fetched = try? await api.fetchItems(project: slug) {
                 self.items = self.filtered(fetched)
             }
