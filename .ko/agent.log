@@ -38,3 +38,5 @@ loop: building pun-8b48 — Let's add basic markdown parsing to ticket bodies. I
 loop: building pun-347b — Add triage text input: tapping the status circle on a project ticket opens a text entry. On submit, call ko triage <id> <text> via KoAPI. Dismiss the input on submit. Only available on project tickets (not personal view).
 loop: pun-347b SUCCEED
 loop: building pun-c83a — Triage visual treatment: if a ticket has a triage value, render the status circle as filled grey. Tickets with triage should not be eligible for additional triage (don't open the text input on tap).
+loop: pun-c83a SUCCEED
+loop: building pun-ee67 — We need an (x) in the add ticket input when text exists, to make it easy to remove the body if the user decides to skip
