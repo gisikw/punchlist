@@ -11,9 +11,10 @@ struct Item: Codable, Identifiable, Equatable {
     var description: String?
     var planQuestions: [PlanQuestion]?
     var modified: String?
+    var triage: String?
 
     enum CodingKeys: String, CodingKey {
-        case id, created, priority, status, hasUnresolvedDep, description, modified
+        case id, created, priority, status, hasUnresolvedDep, description, modified, triage
         case text = "title"
         case planQuestions = "plan-questions"
     }
@@ -29,6 +30,7 @@ struct Item: Codable, Identifiable, Equatable {
         description = try c.decodeIfPresent(String.self, forKey: .description)
         planQuestions = try c.decodeIfPresent([PlanQuestion].self, forKey: .planQuestions)
         modified = try c.decodeIfPresent(String.self, forKey: .modified)
+        triage = try c.decodeIfPresent(String.self, forKey: .triage)
         done = status == "closed"
     }
 

@@ -52,6 +52,8 @@ struct ItemRow: View {
         isInProgress || isBlocked
     }
 
+    private var hasTriage: Bool { item.triage != nil }
+
     private var accentColor: Color {
         if isBlocked { return .punchPink }
         if isInProgress { return .punchBlue }
@@ -180,7 +182,7 @@ struct ItemRow: View {
                         .frame(width: 44)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            if onTriage != nil {
+                            if onTriage != nil && !hasTriage {
                                 showTriageInput.toggle()
                             } else {
                                 isPersonal ? onToggle() : onExpand()
@@ -339,6 +341,10 @@ struct ItemRow: View {
                 Image(systemName: "checkmark")
                     .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.white)
+            } else if hasTriage {
+                Circle()
+                    .fill(Color.punchGray)
+                    .frame(width: 22, height: 22)
             }
         }
         .frame(width: 30, height: 30)

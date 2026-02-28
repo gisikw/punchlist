@@ -1,16 +1,4 @@
----
-id: pun-c83a
-status: resolved
-deps: [pun-347b]
-created: 2026-02-28T07:45:24Z
-type: task
-priority: 2
----
-# Triage visual treatment: if a ticket has a triage value, render the status circle as filled grey. Tickets with triage should not be eligible for additional triage (don't open the text input on tap).
-
-## Notes
-
-**2026-02-28 07:57:28 UTC:** ## Summary
+## Summary
 
 Implemented triage visual treatment as specified.
 
@@ -31,5 +19,3 @@ No deviations from the plan. `hasTriage` placement (line 54 vs. the plan's "arou
 ### Nothing to flag
 
 No edge cases were missed. The `done` state correctly supersedes triage visually. Triage suppression works for both personal and project ticket contexts since it only fires when `onTriage != nil` (project tickets) anyway.
-
-**2026-02-28 07:57:28 UTC:** ko: SUCCEED
