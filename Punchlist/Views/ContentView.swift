@@ -215,7 +215,8 @@ struct ContentView: View {
                                     try? await Task.sleep(for: .milliseconds(350))
                                     proxy.scrollTo(item.id, anchor: .bottom)
                                 }
-                            }
+                            },
+                            onTriage: viewModel.isPersonal ? nil : { text in viewModel.triageItem(item, text: text) }
                         )
                         .id(item.id)
                     }

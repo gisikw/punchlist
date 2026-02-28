@@ -41,6 +41,10 @@ struct KoAPI {
         _ = try await run(["bump", id])
     }
 
+    func triageItem(id: String, text: String) async throws {
+        _ = try await run(["triage", id, text])
+    }
+
     // MARK: - Plan Questions
 
     func fetchQuestions(id: String) async throws -> [PlanQuestion] {

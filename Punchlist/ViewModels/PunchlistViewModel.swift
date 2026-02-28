@@ -262,6 +262,12 @@ final class PunchlistViewModel {
         afterAction()
     }
 
+    func triageItem(_ item: Item, text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        Task { try? await api.triageItem(id: item.id, text: trimmed) }
+    }
+
     func bumpItem(_ item: Item) {
         let action: () async -> Void = { [api] in
             try? await api.bumpItem(id: item.id)

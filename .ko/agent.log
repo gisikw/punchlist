@@ -34,3 +34,5 @@ loop complete: 1 processed (1 succeeded, 0 failed, 0 blocked, 0 decomposed)
 stopped: empty
 {"blocked":0,"decomposed":0,"failed":0,"runtime_seconds":250.830243598,"stop_reason":"empty","succeeded":1,"tickets_processed":1,"ts":"2026-02-26T21:23:33Z"}
 loop: building pun-8b48 — Let's add basic markdown parsing to ticket bodies. I like keeping the font small and readable the way that it is - so just treating headers as bold or something similarly simple could work? Doesn't need to be exhaustive, but would be nice to see some basic ticket note body parsing
+{"blocked":0,"decomposed":0,"failed":1,"runtime_seconds":367.19541439,"stop_reason":"empty","succeeded":1,"tickets_processed":2,"ts":"2026-02-26T21:48:15Z"}
+loop: building pun-347b — Add triage text input: tapping the status circle on a project ticket opens a text entry. On submit, call ko triage <id> <text> via KoAPI. Dismiss the input on submit. Only available on project tickets (not personal view).

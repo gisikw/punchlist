@@ -13,8 +13,11 @@ struct ItemRow: View {
     let onBump: () -> Void
     let onExpand: () -> Void
     let onCollapse: () -> Void
+    let onTriage: ((String) -> Void)?
 
     @State private var pulseActive = false
+    @State private var showTriageInput = false
+    @State private var triageText = ""
     @State private var holdProgress: CGFloat = 0
     @State private var isHolding = false
     @State private var holdStartTime: Date?
@@ -72,6 +75,34 @@ struct ItemRow: View {
             }
             .contentShape(Rectangle())
             .overlay { tapOverlay }
+
+            if showTriageInput {
+                HStack(spacing: 8) {
+                    TextField("triage note...", text: $triageText)
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.punchText)
+                        .submitLabel(.send)
+                        .onSubmit {
+                            let trimmed = triageText.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !trimmed.isEmpty {
+                                onTriage?(trimmed)
+                            }
+                            triageText = ""
+                            showTriageInput = false
+                        }
+
+                    Button {
+                        triageText = ""
+                        showTriageInput = false
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(Color.punchGray)
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.leading, 44)
+            }
 
             // Interactive elements sit outside the tap overlay so their gestures aren't blocked
             if isExpanded && !item.done {
@@ -146,6 +177,17 @@ struct ItemRow: View {
             } else {
                 HStack(spacing: 0) {
                     Color.clear
+                        .frame(width: 44)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if onTriage != nil {
+                                showTriageInput.toggle()
+                            } else {
+                                isPersonal ? onToggle() : onExpand()
+                            }
+                        }
+
+                    Color.clear
                         .contentShape(Rectangle())
                         .onTapGesture { isPersonal ? onToggle() : onExpand() }
 
@@ -167,8 +209,15 @@ struct ItemRow: View {
                 .padding(.leading, 44)
 
             if let desc = item.description, !desc.isEmpty {
+                let processed = desc.split(separator: "\n", omittingEmptySubsequences: false).map { line in
+                    let trimmed = line.drop(while: { $0 == "#" || $0 == " " })
+                    if line.starts(with: "#") && trimmed.count < line.count {
+                        return "**\(trimmed)**"
+                    }
+                    return String(line)
+                }.joined(separator: "\n")
                 if let attributed = try? AttributedString(
-                    markdown: desc,
+                    markdown: processed,
                     options: AttributedString.MarkdownParsingOptions(
                         interpretedSyntax: .inlineOnlyPreservingWhitespace
                     )
