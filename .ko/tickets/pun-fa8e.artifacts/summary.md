@@ -1,16 +1,4 @@
----
-id: pun-fa8e
-status: resolved
-deps: []
-created: 2026-03-01T06:20:56Z
-type: task
-priority: 2
----
-# Let the in-progress indicator supersede the triage indicator (though maybe still using a grey circle outline but with blue fill / glow would be nice)
-
-## Notes
-
-**2026-03-01 14:05:59 UTC:** ## Summary
+## Summary
 
 Implemented visual precedence for the in-progress indicator over the triage indicator in `ItemRow.swift`.
 
@@ -29,5 +17,3 @@ A ticket that is both in triage and in-progress now displays: blue glow/fill (fr
 ### Decisions
 
 No deviations from the plan. The implementation was straightforward and the plan's mapping to code was precise.
-
-**2026-03-01 14:05:59 UTC:** ko: SUCCEED

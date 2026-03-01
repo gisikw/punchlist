@@ -319,6 +319,7 @@ struct ItemRow: View {
         if item.done { return .punchGreen }
         if isResolved { return .punchGreen }
         if isBlocked { return .punchPink }
+        if hasTriage && isInProgress { return .punchGray }
         if isInProgress { return .punchBlue }
         if hasUnresolvedDep { return .punchOrange }
         return .punchGray
@@ -334,7 +335,7 @@ struct ItemRow: View {
                     .fill(accentColor.opacity(0.18))
             }
 
-            if hasTriage {
+            if hasTriage && !isInProgress {
                 Circle()
                     .fill(Color.punchGray.opacity(0.45))
                     .frame(width: 22, height: 22)

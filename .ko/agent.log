@@ -47,3 +47,5 @@ loop complete: 1 processed (1 succeeded, 0 failed, 0 blocked, 0 decomposed)
 stopped: empty
 {"blocked":0,"decomposed":0,"failed":0,"runtime_seconds":379.69553039,"stop_reason":"empty","succeeded":1,"tickets_processed":1,"ts":"2026-03-01T06:13:47Z"}
 loop: building pun-5454 — When triage is selected, keyboard should auto-focus that input field
+loop: pun-5454 SUCCEED
+loop: building pun-fa8e — Let the in-progress indicator supersede the triage indicator (though maybe still using a grey circle outline but with blue fill / glow would be nice)
