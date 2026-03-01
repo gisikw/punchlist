@@ -329,7 +329,11 @@ struct ItemRow: View {
                     .fill(accentColor.opacity(0.18))
             }
 
-            if item.done || isResolved {
+            if hasTriage {
+                Circle()
+                    .fill(Color.punchGray.opacity(0.45))
+                    .frame(width: 22, height: 22)
+            } else if item.done || isResolved {
                 Circle()
                     .fill(Color.punchGreen)
                     .frame(width: 22, height: 22)
@@ -337,10 +341,6 @@ struct ItemRow: View {
                 Image(systemName: "checkmark")
                     .font(.system(size: 10, weight: .bold))
                     .foregroundStyle(.white)
-            } else if hasTriage {
-                Circle()
-                    .fill(Color.punchGray.opacity(0.45))
-                    .frame(width: 22, height: 22)
             }
 
             Circle()
