@@ -41,7 +41,6 @@ final class PunchlistViewModel {
     private let api = KoAPI()
     private let sse = SSEManager()
     private var startDate: Date = Date()
-    private var pendingQueue: [() async -> Void] = []
     private var agentPollTask: Task<Void, Never>?
     private var pollTask: Task<Void, Never>?
     private var pollBurstUntil: Date = .distantPast
@@ -72,7 +71,6 @@ final class PunchlistViewModel {
             guard let self else { return }
             self.items = self.filtered(items)
             self.stopPolling()
-            self.drainQueue()
             self.refreshAgentStatus()
         }
 
@@ -181,13 +179,11 @@ final class PunchlistViewModel {
         guard !trimmed.isEmpty else { return }
 
         let slug = currentProjectSlug
-        let action: () async -> Void = { [api] in
+        Task { [api] in
             try? await api.addItem(project: slug, title: trimmed)
         }
 
-        if isConnected {
-            Task { await action() }
-        } else {
+        if !isConnected {
             let temp = Item(
                 id: String(Int(Date().timeIntervalSince1970 * 1_000_000_000)),
                 text: trimmed,
@@ -195,13 +191,12 @@ final class PunchlistViewModel {
                 created: ISO8601DateFormatter().string(from: Date())
             )
             items.insert(temp, at: 0)
-            pendingQueue.append(action)
         }
         afterAction()
     }
 
     func toggleItem(_ item: Item) {
-        let action: () async -> Void = { [api] in
+        Task { [api] in
             if item.done {
                 try? await api.openItem(id: item.id)
             } else {
@@ -209,9 +204,7 @@ final class PunchlistViewModel {
             }
         }
 
-        if isConnected {
-            Task { await action() }
-        } else {
+        if !isConnected {
             guard let idx = items.firstIndex(where: { $0.id == item.id }) else { return }
             var toggled = items[idx]
             toggled.done.toggle()
@@ -221,43 +214,36 @@ final class PunchlistViewModel {
             } else {
                 items.insert(toggled, at: 0)
             }
-            pendingQueue.append(action)
         }
         afterAction()
     }
 
     func openItem(_ item: Item) {
-        let action: () async -> Void = { [api] in
+        Task { [api] in
             try? await api.openItem(id: item.id)
         }
 
-        if isConnected {
-            Task { await action() }
-        } else {
+        if !isConnected {
             guard let idx = items.firstIndex(where: { $0.id == item.id }) else { return }
             var opened = items[idx]
             opened.done = false
             items.remove(at: idx)
             items.insert(opened, at: 0)
-            pendingQueue.append(action)
         }
         afterAction()
     }
 
     func closeItem(_ item: Item) {
-        let action: () async -> Void = { [api] in
+        Task { [api] in
             try? await api.closeItem(id: item.id)
         }
 
-        if isConnected {
-            Task { await action() }
-        } else {
+        if !isConnected {
             guard let idx = items.firstIndex(where: { $0.id == item.id }) else { return }
             var closed = items[idx]
             closed.done = true
             items.remove(at: idx)
             items.append(closed)
-            pendingQueue.append(action)
         }
         afterAction()
     }
@@ -269,32 +255,26 @@ final class PunchlistViewModel {
     }
 
     func bumpItem(_ item: Item) {
-        let action: () async -> Void = { [api] in
+        Task { [api] in
             try? await api.bumpItem(id: item.id)
         }
 
-        if isConnected {
-            Task { await action() }
-        } else {
+        if !isConnected {
             guard let idx = items.firstIndex(where: { $0.id == item.id }), idx > 0 else { return }
             let bumped = items.remove(at: idx)
             items.insert(bumped, at: 0)
-            pendingQueue.append(action)
         }
         afterAction()
     }
 
     func deleteItem(_ item: Item) {
         // ko doesn't have a delete command — close the item instead
-        let action: () async -> Void = { [api] in
+        Task { [api] in
             try? await api.closeItem(id: item.id)
         }
 
-        if isConnected {
-            Task { await action() }
-        } else {
+        if !isConnected {
             items.removeAll { $0.id == item.id }
-            pendingQueue.append(action)
         }
         afterAction()
     }
@@ -455,16 +435,4 @@ final class PunchlistViewModel {
         }
     }
 
-    // MARK: - Queue
-
-    private func drainQueue() {
-        guard isConnected, !pendingQueue.isEmpty else { return }
-        let queued = pendingQueue
-        pendingQueue = []
-        Task {
-            for action in queued {
-                await action()
-            }
-        }
-    }
 }

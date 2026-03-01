@@ -38,7 +38,6 @@ import XCTest
 /// - When SSE delivers first event, stopPolling() is called (line 78)
 /// - Polling task is cancelled and set to nil
 /// - Offline indicator disappears
-/// - Pending queue drains (any queued mutations replay)
 ///
 /// ### 4. Mutations while offline
 /// **Steps:**
@@ -47,12 +46,12 @@ import XCTest
 /// - Toggle an item's done state
 /// - Bump an item
 /// **Expected:**
-/// - UI updates optimistically (items inserted/moved immediately)
+/// - API calls fire immediately regardless of SSE state (may fail if truly offline)
+/// - UI updates optimistically when SSE is disconnected
 /// - afterAction() calls pollBurst() for each mutation
 /// - pollBurstUntil is set to Date() + 10 seconds
 /// - Polling switches to 1-second intervals (burst mode)
 /// - After 10 seconds, polling reverts to 5-second intervals
-/// - When network restored, pending queue drains and mutations sync to server
 ///
 /// ### 5. Race condition fixed (2026-02-26)
 /// **Verification:**
@@ -157,32 +156,31 @@ final class PollingFallbackTests: XCTestCase {
         // This means disconnect detection can take up to 2 seconds
     }
 
-    func testOfflineQueueDrains() async throws {
+    func testMutationsFireImmediately() async throws {
         let vm = makeViewModel()
 
-        // When offline, mutations are added to pendingQueue
-        // When SSE reconnects, drainQueue() is called (line 79)
-        // This replays all queued mutations
-
-        // drainQueue() only runs when isConnected && !pendingQueue.isEmpty (line 424)
+        // All mutations (add, toggle, open, close, bump, delete) fire their
+        // API call immediately via Task{}, regardless of SSE connection state.
+        // This prevents the race where SSE reconnects and wipes optimistic
+        // state before the server has processed the mutation.
     }
 
     func testOfflineMutationsAreOptimistic() async throws {
         let vm = makeViewModel()
 
-        // When adding an item offline (line 194-206):
+        // When SSE is disconnected, mutations update local state optimistically
+        // in addition to firing the API call immediately:
+
+        // Adding an item offline:
         // 1. A temporary item is created with UnixNano ID
         // 2. It's inserted at index 0 (most recent)
-        // 3. The mutation is queued for replay
 
-        // When toggling offline (line 218-231):
+        // Toggling offline:
         // 1. The item's done state is toggled
         // 2. Done items move to end, undone to start
-        // 3. The mutation is queued
 
-        // When bumping offline (line 240-247):
+        // Bumping offline:
         // 1. Item is moved to index 0
-        // 2. The mutation is queued
     }
 
     func testShowOfflineUILogic() throws {

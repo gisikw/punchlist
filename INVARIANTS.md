@@ -6,12 +6,14 @@ Explicit contracts for Punchlist iOS. If a convention matters, it's here.
 
 - **API client only** — no local data persistence. The Go backend is the
   single source of truth. Base URL is configured via environment/build settings.
-- **WebSocket for state** — the server pushes the full item array on every
-  change. The client replaces its entire model on each message. No diffing,
-  no merge logic.
-- **Offline queue** — when disconnected, mutations buffer locally and replay
-  on reconnect. Optimistic UI updates during offline. Queue is in-memory only
-  (lost on app termination — acceptable, matches web client).
+- **SSE for state** — the server pushes the full item array via Server-Sent
+  Events on connect and on every mutation. The client replaces its entire
+  model on each event. No diffing, no merge logic.
+- **Mutations fire immediately** — all API calls (add, toggle, open, close,
+  bump, delete) fire via `Task{}` regardless of SSE connection state. When
+  SSE is disconnected, the UI also applies optimistic local state for
+  immediate visual feedback. There is no offline queue; mutations are not
+  deferred until reconnect.
 - **No local database** — no CoreData, no SwiftData, no SQLite. Items live
   in memory and come from the server.
 
@@ -28,7 +30,7 @@ Explicit contracts for Punchlist iOS. If a convention matters, it's here.
   checkmark. Undone items: empty circle with border.
 - **Input bar fixed at bottom** — always visible, not part of the scroll.
 - **No modals, no toasts, no confirmations** — mutations are instant and
-  silent. The WebSocket echo confirms success.
+  silent. The SSE echo confirms success.
 - **Color palette matches web client**: background `#FAFAFA`, text `#2D2A2E`,
   secondary `#939293`, done green `#A9DC76`, focus blue `#78DCE8`.
 
@@ -37,10 +39,10 @@ Explicit contracts for Punchlist iOS. If a convention matters, it's here.
 - **SwiftUI only** — no UIKit wrappers unless absolutely forced by a
   platform gap.
 - **iOS 17+** — use `@Observable`, not `ObservableObject`/`@Published`.
-- **One model file, one API file, one WebSocket file, one view model, three
+- **One model file, one API file, one SSE file, one view model, three
   views.** If a file exceeds ~300 lines, split along behavioral seams.
-- **No third-party dependencies.** URLSession for HTTP, URLSessionWebSocketTask
-  for WebSocket. No Alamofire, no Starscream, no SwiftPM packages.
+- **No third-party dependencies.** URLSession for HTTP, URLSession delegate
+  for SSE streaming. No Alamofire, no Starscream, no SwiftPM packages.
 - **No generics for one-off types.** The item model is concrete.
 
 ## Data Model
@@ -63,8 +65,8 @@ optimistic offline items use temporary IDs that get replaced on sync.
   Reset on successful connect.
 - **Offline indicator** — shown after 1.5s of disconnect (not immediately, to
   avoid flicker on brief interruptions).
-- **All mutations are fire-and-forget** — POST/PATCH/DELETE, don't wait for
-  response. The WebSocket echo is the confirmation.
+- **All mutations are fire-and-forget** — POST to `/ko` endpoint, don't wait
+  for response. The SSE event echo is the confirmation.
 
 ## Build
 

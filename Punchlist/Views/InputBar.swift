@@ -23,6 +23,7 @@ struct InputBar: View {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(.secondary)
                 }
+                .buttonStyle(.plain)
             }
         }
         .padding(14)
