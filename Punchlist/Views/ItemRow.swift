@@ -329,10 +329,6 @@ struct ItemRow: View {
                     .fill(accentColor.opacity(0.18))
             }
 
-            Circle()
-                .strokeBorder(circleColor, lineWidth: 2)
-                .frame(width: 22, height: 22)
-
             if item.done || isResolved {
                 Circle()
                     .fill(Color.punchGreen)
@@ -343,9 +339,13 @@ struct ItemRow: View {
                     .foregroundStyle(.white)
             } else if hasTriage {
                 Circle()
-                    .fill(Color.punchGray)
+                    .fill(Color.punchGray.opacity(0.45))
                     .frame(width: 22, height: 22)
             }
+
+            Circle()
+                .strokeBorder(circleColor, lineWidth: 2)
+                .frame(width: 22, height: 22)
         }
         .frame(width: 30, height: 30)
         .scaleEffect(hasPulse ? (pulseActive ? 1.08 : 1.0) : 1.0)

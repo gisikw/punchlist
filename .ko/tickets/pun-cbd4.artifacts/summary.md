@@ -1,16 +1,4 @@
----
-id: pun-cbd4
-status: resolved
-deps: []
-created: 2026-03-01T05:38:00Z
-type: task
-priority: 2
----
-# Make the triage circle grey lighter, and ensure the blue in-progress glow still shows around it if the ticket is being worked
-
-## Notes
-
-**2026-03-01 05:44:20 UTC:** # Summary
+# Summary
 
 ## What Was Done
 
@@ -28,5 +16,3 @@ Two small changes to `Punchlist/Views/ItemRow.swift` in the `circle` computed pr
 ## For Future Readers
 
 The ZStack order in `circle` is now: (1) glow background, (2) done/resolved or triage fill, (3) strokeBorder. This layering guarantees the stroke color is always the topmost visual element on the circle.
-
-**2026-03-01 05:44:20 UTC:** ko: SUCCEED
