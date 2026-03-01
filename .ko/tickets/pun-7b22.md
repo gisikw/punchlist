@@ -1,6 +1,6 @@
 ---
 id: pun-7b22
-status: resolved
+status: closed
 deps: []
 created: 2026-03-01T05:37:00Z
 type: task

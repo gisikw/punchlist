@@ -1,6 +1,6 @@
 ---
 id: pun-cbd4
-status: resolved
+status: closed
 deps: []
 created: 2026-03-01T05:38:00Z
 type: task

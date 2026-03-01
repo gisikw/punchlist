@@ -1,6 +1,6 @@
 ---
 id: pun-fbc0
-status: resolved
+status: closed
 deps: []
 created: 2026-02-26T17:16:46Z
 type: task

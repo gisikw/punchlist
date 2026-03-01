@@ -1,0 +1,20 @@
+## Summary
+
+Added auto-focus behavior to the triage input field in `ItemRow.swift` so the keyboard appears immediately when the user taps the triage circle.
+
+### Changes Made
+
+**Punchlist/Views/ItemRow.swift**
+- Added `@FocusState private var triageInputFocused: Bool` alongside existing state declarations (line 18)
+- Attached `.focused($triageInputFocused)` modifier to the triage `TextField` (line 86)
+- Added `.onChange(of: showTriageInput) { _, newValue in triageInputFocused = newValue }` on the outer `VStack` in `body` (line 153–155)
+
+### Notable Decisions
+
+The `onChange` handler uses `triageInputFocused = newValue` which covers both directions: setting focus to `true` when the input becomes visible, and clearing it to `false` when hidden (dismiss/submit). This matches the plan's guidance to clear focus on hide to avoid stale state.
+
+The modifier is placed on the top-level `VStack` in `body`, alongside the existing `hasPulse` onChange handler, which is the idiomatic SwiftUI location.
+
+### Nothing to Flag
+
+Implementation is minimal, follows the project pattern established in `InputBar.swift`, and stays within ticket scope.

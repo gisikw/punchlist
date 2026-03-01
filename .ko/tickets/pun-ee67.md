@@ -1,6 +1,6 @@
 ---
 id: pun-ee67
-status: resolved
+status: closed
 deps: []
 created: 2026-02-28T07:19:37Z
 type: task

@@ -15,6 +15,7 @@ struct ItemRow: View {
     let onCollapse: () -> Void
     let onTriage: ((String) -> Void)?
 
+    @FocusState private var triageInputFocused: Bool
     @State private var pulseActive = false
     @State private var showTriageInput = false
     @State private var triageText = ""
@@ -82,6 +83,7 @@ struct ItemRow: View {
                 HStack(spacing: 8) {
                     TextField("triage note...", text: $triageText)
                         .font(.system(size: 14))
+                        .focused($triageInputFocused)
                         .foregroundStyle(Color.punchText)
                         .submitLabel(.send)
                         .onSubmit {
@@ -147,6 +149,9 @@ struct ItemRow: View {
             } else {
                 pulseActive = false
             }
+        }
+        .onChange(of: showTriageInput) { _, newValue in
+            triageInputFocused = newValue
         }
     }
 
