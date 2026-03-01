@@ -241,6 +241,47 @@ final class FilteringTests: XCTestCase {
         XCTAssertFalse(vm.hasUnblockedTickets, "Only non-actionable tickets should result in no unblocked tickets")
     }
 
+    func testHasUnblockedTicketsIncludesTriage() {
+        let vm = makeViewModel()
+
+        // Blocked ticket with triage — agent should show
+        vm.items = [{
+            var item = Item(id: "1", text: "Blocked with triage", done: false, created: "2025-01-01T10:00:00Z", status: "blocked")
+            item.triage = "Try resetting the connection"
+            return item
+        }()]
+
+        XCTAssertTrue(vm.hasUnblockedTickets, "Blocked ticket with triage should count as actionable")
+
+        // Blocked ticket without triage — agent should hide
+        vm.items = [
+            Item(id: "1", text: "Blocked no triage", done: false, created: "2025-01-01T10:00:00Z", status: "blocked"),
+        ]
+
+        XCTAssertFalse(vm.hasUnblockedTickets, "Blocked ticket without triage should not count as actionable")
+
+        // Resolved ticket with triage — agent should hide
+        vm.items = [{
+            var item = Item(id: "1", text: "Resolved with triage", done: false, created: "2025-01-01T10:00:00Z", status: "resolved")
+            item.triage = "Some guidance"
+            return item
+        }()]
+
+        XCTAssertFalse(vm.hasUnblockedTickets, "Resolved ticket with triage should not count as actionable")
+
+        // Mix of blocked-with-triage and blocked-without-triage — agent should show
+        vm.items = [
+            {
+                var item = Item(id: "1", text: "Blocked with triage", done: false, created: "2025-01-01T10:00:00Z", status: "blocked")
+                item.triage = "Try resetting"
+                return item
+            }(),
+            Item(id: "2", text: "Blocked no triage", done: false, created: "2025-01-01T10:00:00Z", status: "blocked"),
+        ]
+
+        XCTAssertTrue(vm.hasUnblockedTickets, "At least one blocked ticket with triage should make toggle visible")
+    }
+
     func testHasUnblockedTicketsIncludesInProgress() {
         let vm = makeViewModel()
 

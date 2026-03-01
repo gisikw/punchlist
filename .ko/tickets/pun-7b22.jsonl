@@ -1,0 +1,16 @@
+{"event":"build_start","ticket":"pun-7b22","ts":"2026-03-01T05:44:20Z"}
+{"event":"workflow_start","ticket":"pun-7b22","ts":"2026-03-01T05:44:20Z","workflow":"main"}
+{"event":"node_start","node":"classify","ticket":"pun-7b22","ts":"2026-03-01T05:44:20Z","workflow":"main"}
+{"event":"node_complete","node":"classify","result":"route","ticket":"pun-7b22","ts":"2026-03-01T05:44:28Z","workflow":"main"}
+{"event":"workflow_start","ticket":"pun-7b22","ts":"2026-03-01T05:44:28Z","workflow":"task"}
+{"event":"node_start","node":"plan","ticket":"pun-7b22","ts":"2026-03-01T05:44:28Z","workflow":"task"}
+{"event":"node_complete","node":"plan","result":"done","ticket":"pun-7b22","ts":"2026-03-01T05:45:41Z","workflow":"task"}
+{"event":"node_start","node":"actionable","ticket":"pun-7b22","ts":"2026-03-01T05:45:41Z","workflow":"task"}
+{"event":"node_complete","node":"actionable","result":"continue","ticket":"pun-7b22","ts":"2026-03-01T05:45:56Z","workflow":"task"}
+{"event":"node_start","node":"implement","ticket":"pun-7b22","ts":"2026-03-01T05:45:56Z","workflow":"task"}
+{"event":"node_complete","node":"implement","result":"done","ticket":"pun-7b22","ts":"2026-03-01T05:46:48Z","workflow":"task"}
+{"event":"node_start","node":"verify","ticket":"pun-7b22","ts":"2026-03-01T05:46:48Z","workflow":"task"}
+{"event":"node_complete","node":"verify","result":"done","ticket":"pun-7b22","ts":"2026-03-01T05:47:18Z","workflow":"task"}
+{"event":"node_start","node":"review","ticket":"pun-7b22","ts":"2026-03-01T05:47:18Z","workflow":"task"}
+{"event":"node_complete","node":"review","result":"continue","ticket":"pun-7b22","ts":"2026-03-01T05:47:50Z","workflow":"task"}
+{"event":"build_complete","outcome":"succeed","ticket":"pun-7b22","ts":"2026-03-01T05:47:50Z"}
