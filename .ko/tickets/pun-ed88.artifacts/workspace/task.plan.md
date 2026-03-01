@@ -1,14 +1,15 @@
-Plan written to `/home/dev/Projects/punchlist/.ko/tickets/pun-ed88.artifacts/plan.md`.
+Punchlist dev shell
+  just --list  — available recipes
+  just check   — type-check Swift
+  just build   — simulator build
+The plan is updated. Here's where things stand:
 
-## Summary
+**Already complete (prior session):**
+- Fort-nix app definition deleted (`apps/punchlist/default.nix`)
+- "punchlist" removed from ratched's apps array in `manifest.nix`
+- punchlist-server forge repo entry removed from cluster manifest
+- `/home/dev/Projects/punchlist-server/` directory deleted
+- Exocortex API Surface doc rewritten for ko-based API
 
-The plan covers decommissioning punchlist-server infrastructure across three locations:
-
-1. **Runtime infrastructure** (ratched host): Stop and disable the systemd service
-2. **Configuration** (fort-nix): Remove the app definition, host app reference, and forge repo entry
-3. **Code** (punchlist-server repo): Archive with deprecation notice
-4. **Documentation** (exocortex notes): Update API surface doc to reflect ko-based API
-
-**Two open questions** for you to decide:
-1. Should we stop mirroring punchlist-server to GitHub, or just leave the forge config as-is?
-2. After archiving, do you want to keep the local punchlist-server directory or delete it?
+**One remaining item:**
+Verify the punchlist systemd service is no longer active on ratched. Since the NixOS config change was committed and gitops should have deployed it, the service is likely already gone — but it needs confirmation. Would you like me to check that via `fort`?
