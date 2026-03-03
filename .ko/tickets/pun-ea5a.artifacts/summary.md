@@ -1,16 +1,4 @@
----
-id: pun-ea5a
-status: resolved
-deps: []
-created: 2026-03-03T15:55:04Z
-type: task
-priority: 2
----
-# In project mode, holding on a collapsed card should behave like holding the tap-or-hold bar in expanded. That is, the card itself should fill from left to right green, and if the user holds, it should take the same actions. Unblocking blocked cards, clearing resolved cards, etc
-
-## Notes
-
-**2026-03-03 16:05:43 UTC:** # After-Action Summary: pun-ea5a
+# After-Action Summary: pun-ea5a
 
 ## What Was Done
 
@@ -36,5 +24,3 @@ Added hold-to-act behavior to collapsed project-mode cards in `ItemRow.swift`. W
 
 - `ItemRow.swift` is now ~462 lines, above the soft "~300 line" invariant threshold, but was already ~388 lines before this change. A future split along behavioral seams (e.g., extracting gesture logic) may be warranted if the file continues to grow.
 - The `tapOverlay` left-zone fallback `isPersonal ? onToggle() : onExpand()` isn't replicated in `collapsedProjectHoldOverlay` because personal-mode cards never reach that code path — the `!isPersonal` guard in the overlay routing handles it.
-
-**2026-03-03 16:05:43 UTC:** ko: SUCCEED

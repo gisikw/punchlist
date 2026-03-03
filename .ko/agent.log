@@ -59,3 +59,5 @@ loop complete: 1 processed (1 succeeded, 0 failed, 0 blocked, 0 decomposed)
 stopped: empty
 {"blocked":0,"decomposed":0,"failed":0,"runtime_seconds":199.352718286,"stop_reason":"empty","succeeded":1,"tickets_processed":1,"ts":"2026-03-01T14:49:43Z"}
 loop: building pun-8a56 — The x to dismiss input text is too dark; please make it a lighter grey
+loop: pun-8a56 SUCCEED
+loop: building pun-ea5a — In project mode, holding on a collapsed card should behave like holding the tap-or-hold bar in expanded. That is, the card itself should fill from left to right green, and if the user holds, it should take the same actions. Unblocking blocked cards, clearing resolved cards, etc

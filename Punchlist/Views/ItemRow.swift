@@ -77,7 +77,13 @@ struct ItemRow: View {
                 }
             }
             .contentShape(Rectangle())
-            .overlay { tapOverlay }
+            .overlay {
+                if !isExpanded && !isPersonal {
+                    collapsedProjectHoldOverlay
+                } else {
+                    tapOverlay
+                }
+            }
 
             if showTriageInput {
                 HStack(spacing: 8) {
@@ -125,7 +131,16 @@ struct ItemRow: View {
         .padding(.horizontal, 12)
         .padding(.vertical, 14)
         .padding(8)
-        .background(.white)
+        .background {
+            ZStack(alignment: .leading) {
+                Color.white
+                if !isExpanded && !isPersonal && holdProgress > 0 {
+                    GeometryReader { geo in
+                        Color.punchGreen.opacity(0.35).frame(width: geo.size.width * holdProgress)
+                    }
+                }
+            }
+        }
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isExpanded)
         .overlay(
@@ -313,6 +328,74 @@ struct ItemRow: View {
             )
         }
         .frame(height: 28)
+    }
+
+    private var collapsedProjectHoldOverlay: some View {
+        GeometryReader { geo in
+            Color.clear
+                .contentShape(Rectangle())
+                .gesture(
+                    DragGesture(minimumDistance: 0)
+                        .onChanged { _ in
+                            guard !isHolding else { return }
+                            isHolding = true
+                            holdStartTime = Date()
+                            holdDelayTask = Task { @MainActor in
+                                try? await Task.sleep(for: .milliseconds(200))
+                                guard !Task.isCancelled, isHolding else { return }
+                                withAnimation(.linear(duration: 1.3)) {
+                                    holdProgress = 1.0
+                                }
+                                try? await Task.sleep(for: .milliseconds(1300))
+                                guard !Task.isCancelled, isHolding else { return }
+                                isHolding = false
+                                holdProgress = 0
+                                holdStartTime = nil
+                                if isBlocked {
+                                    if questions.isEmpty {
+                                        onOpen()
+                                    } else {
+                                        onClose()
+                                    }
+                                } else {
+                                    onToggle()
+                                }
+                            }
+                        }
+                        .onEnded { value in
+                            guard isHolding else { return }
+                            let elapsed = Date().timeIntervalSince(holdStartTime ?? Date())
+                            holdDelayTask?.cancel()
+                            holdDelayTask = nil
+                            isHolding = false
+                            holdStartTime = nil
+
+                            if elapsed < 0.2 {
+                                holdProgress = 0
+                                if item.done {
+                                    onToggle()
+                                } else {
+                                    let x = value.startLocation.x
+                                    if x < 44 {
+                                        if onTriage != nil && !hasTriage {
+                                            showTriageInput.toggle()
+                                        } else {
+                                            onExpand()
+                                        }
+                                    } else if x > geo.size.width * 0.8 {
+                                        onBump()
+                                    } else {
+                                        onExpand()
+                                    }
+                                }
+                            } else {
+                                withAnimation(.easeOut(duration: 0.2)) {
+                                    holdProgress = 0
+                                }
+                            }
+                        }
+                )
+        }
     }
 
     private var circleColor: Color {
