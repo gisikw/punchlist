@@ -1,6 +1,6 @@
 ---
 id: pun-ed88
-status: resolved
+status: closed
 deps: [pun-7201]
 created: 2026-02-25T23:49:01Z
 type: task
