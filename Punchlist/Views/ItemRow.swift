@@ -334,9 +334,16 @@ struct ItemRow: View {
         GeometryReader { geo in
             Color.clear
                 .contentShape(Rectangle())
-                .gesture(
+                .simultaneousGesture(
                     DragGesture(minimumDistance: 0)
-                        .onChanged { _ in
+                        .onChanged { value in
+                            if abs(value.translation.width) > 8 || abs(value.translation.height) > 8 {
+                                holdDelayTask?.cancel()
+                                holdDelayTask = nil
+                                isHolding = false
+                                holdProgress = 0
+                                return
+                            }
                             guard !isHolding else { return }
                             isHolding = true
                             holdStartTime = Date()

@@ -61,3 +61,8 @@ stopped: empty
 loop: building pun-8a56 — The x to dismiss input text is too dark; please make it a lighter grey
 loop: pun-8a56 SUCCEED
 loop: building pun-ea5a — In project mode, holding on a collapsed card should behave like holding the tap-or-hold bar in expanded. That is, the card itself should fill from left to right green, and if the user holds, it should take the same actions. Unblocking blocked cards, clearing resolved cards, etc
+loop: pun-ea5a SUCCEED
+loop complete: 2 processed (2 succeeded, 0 failed, 0 blocked, 0 decomposed)
+stopped: empty
+{"blocked":0,"decomposed":0,"failed":0,"runtime_seconds":616.095805836,"stop_reason":"empty","succeeded":2,"tickets_processed":2,"ts":"2026-03-03T16:05:43Z"}
+loop: building pun-fb2f — The long-press on collapsed card behavior that was recently introduced is great, but it intercepts scroll, which is a big problem. If this is solveable, let's solve it. If not, let's move the long press trigger to apply to the circles, alongside the tap-to-triage behavior that already lives there
