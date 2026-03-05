@@ -23,6 +23,7 @@ struct ItemRow: View {
     @State private var isHolding = false
     @State private var holdStartTime: Date?
     @State private var holdDelayTask: Task<Void, Never>?
+    @State private var showCircleActions = false
 
     private var isInProgress: Bool {
         item.status == "in_progress"
@@ -78,7 +79,9 @@ struct ItemRow: View {
             }
             .contentShape(Rectangle())
             .overlay {
-                if !isExpanded && !isPersonal {
+                if showCircleActions && !isExpanded && !isPersonal {
+                    circleActionsOverlay
+                } else if !isExpanded && !isPersonal {
                     collapsedProjectHoldOverlay
                 } else {
                     tapOverlay
@@ -168,6 +171,9 @@ struct ItemRow: View {
         .onChange(of: showTriageInput) { _, newValue in
             triageInputFocused = newValue
         }
+        .onChange(of: isExpanded) { _, _ in
+            showCircleActions = false
+        }
     }
 
     private var headerRow: some View {
@@ -175,6 +181,8 @@ struct ItemRow: View {
             HStack(spacing: 14) {
                 circle
                 text
+                    .opacity(showCircleActions && !isExpanded && !isPersonal ? 0 : 1)
+                    .animation(.easeInOut(duration: 0.18), value: showCircleActions)
             }
 
             Spacer(minLength: 8)
@@ -332,76 +340,73 @@ struct ItemRow: View {
 
     private var collapsedProjectHoldOverlay: some View {
         GeometryReader { geo in
-            Color.clear
-                .contentShape(Rectangle())
-                .simultaneousGesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            if abs(value.translation.width) > 8 || abs(value.translation.height) > 8 {
-                                holdDelayTask?.cancel()
-                                holdDelayTask = nil
-                                isHolding = false
-                                holdProgress = 0
-                                return
-                            }
-                            guard !isHolding else { return }
-                            isHolding = true
-                            holdStartTime = Date()
-                            holdDelayTask = Task { @MainActor in
-                                try? await Task.sleep(for: .milliseconds(200))
-                                guard !Task.isCancelled, isHolding else { return }
-                                withAnimation(.linear(duration: 1.3)) {
-                                    holdProgress = 1.0
-                                }
-                                try? await Task.sleep(for: .milliseconds(1300))
-                                guard !Task.isCancelled, isHolding else { return }
-                                isHolding = false
-                                holdProgress = 0
-                                holdStartTime = nil
-                                if isBlocked {
-                                    if questions.isEmpty {
-                                        onOpen()
-                                    } else {
-                                        onClose()
-                                    }
-                                } else {
-                                    onToggle()
-                                }
-                            }
-                        }
-                        .onEnded { value in
-                            guard isHolding else { return }
-                            let elapsed = Date().timeIntervalSince(holdStartTime ?? Date())
-                            holdDelayTask?.cancel()
-                            holdDelayTask = nil
-                            isHolding = false
-                            holdStartTime = nil
+            if item.done {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { onToggle() }
+            } else {
+                HStack(spacing: 0) {
+                    Color.clear
+                        .frame(width: 44)
+                        .contentShape(Rectangle())
+                        .onTapGesture { showCircleActions = true }
 
-                            if elapsed < 0.2 {
-                                holdProgress = 0
-                                if item.done {
-                                    onToggle()
-                                } else {
-                                    let x = value.startLocation.x
-                                    if x < 44 {
-                                        if onTriage != nil && !hasTriage {
-                                            showTriageInput.toggle()
-                                        } else {
-                                            onExpand()
-                                        }
-                                    } else if x > geo.size.width * 0.8 {
-                                        onBump()
-                                    } else {
-                                        onExpand()
-                                    }
-                                }
-                            } else {
-                                withAnimation(.easeOut(duration: 0.2)) {
-                                    holdProgress = 0
-                                }
-                            }
-                        }
-                )
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { onExpand() }
+
+                    Color.clear
+                        .frame(width: geo.size.width * 0.2)
+                        .contentShape(Rectangle())
+                        .onTapGesture { onBump() }
+                }
+            }
+        }
+    }
+
+    private var circleActionsOverlay: some View {
+        GeometryReader { geo in
+            HStack(spacing: 0) {
+                Color.clear
+                    .frame(width: 44)
+                    .contentShape(Rectangle())
+                    .onTapGesture { showCircleActions = false }
+
+                HStack(spacing: 20) {
+                    Button {
+                        showTriageInput = true
+                        showCircleActions = false
+                    } label: {
+                        Image(systemName: "bubble.left")
+                            .font(.system(size: 20))
+                            .foregroundStyle(Color.punchGray)
+                    }
+
+                    Button {
+                        if isBlocked { onOpen() } else { onClose() }
+                        showCircleActions = false
+                    } label: {
+                        Image(systemName: isBlocked ? "lock.open.fill" : "lock.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(isBlocked ? Color.punchOrange : Color.punchPink)
+                    }
+
+                    Button {
+                        onToggle()
+                        showCircleActions = false
+                    } label: {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundStyle(Color.punchGreen)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+
+                Color.clear
+                    .frame(width: geo.size.width * 0.2)
+                    .contentShape(Rectangle())
+                    .onTapGesture { showCircleActions = false }
+            }
         }
     }
 
