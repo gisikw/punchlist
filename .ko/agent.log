@@ -68,3 +68,8 @@ stopped: empty
 loop: building pun-fb2f — The long-press on collapsed card behavior that was recently introduced is great, but it intercepts scroll, which is a big problem. If this is solveable, let's solve it. If not, let's move the long press trigger to apply to the circles, alongside the tap-to-triage behavior that already lives there
 {"blocked":0,"decomposed":0,"failed":1,"runtime_seconds":149.011099927,"stop_reason":"empty","succeeded":0,"tickets_processed":1,"ts":"2026-03-05T12:47:03Z"}
 loop: building pun-054b — The long press on circle project view isn't working. Let's try this: for a collapsed card in project view, tapping the circle hides the labels on the card and replaces them with nice tap target actions. SVG iconography. Have a comment icon which triggers the triage step, a block or unblock button, and a complete button
+loop: pun-054b SUCCEED
+loop complete: 1 processed (1 succeeded, 0 failed, 0 blocked, 0 decomposed)
+stopped: empty
+{"blocked":0,"decomposed":0,"failed":0,"runtime_seconds":296.4797291,"stop_reason":"empty","succeeded":1,"tickets_processed":1,"ts":"2026-03-05T14:26:02Z"}
+loop: building pun-8207 — Evenly distribute the circle actions recently introduced. Right now they bunch up, making mistaps more likely

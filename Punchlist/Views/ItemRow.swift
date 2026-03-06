@@ -372,7 +372,8 @@ struct ItemRow: View {
                     .contentShape(Rectangle())
                     .onTapGesture { showCircleActions = false }
 
-                HStack(spacing: 20) {
+                HStack(spacing: 0) {
+                    Spacer()
                     Button {
                         showTriageInput = true
                         showCircleActions = false
@@ -381,6 +382,7 @@ struct ItemRow: View {
                             .font(.system(size: 20))
                             .foregroundStyle(Color.punchGray)
                     }
+                    Spacer()
 
                     Button {
                         if isBlocked { onOpen() } else { onClose() }
@@ -390,6 +392,7 @@ struct ItemRow: View {
                             .font(.system(size: 20))
                             .foregroundStyle(isBlocked ? Color.punchOrange : Color.punchPink)
                     }
+                    Spacer()
 
                     Button {
                         onToggle()
@@ -399,6 +402,7 @@ struct ItemRow: View {
                             .font(.system(size: 20))
                             .foregroundStyle(Color.punchGreen)
                     }
+                    Spacer()
                 }
                 .frame(maxWidth: .infinity)
 
