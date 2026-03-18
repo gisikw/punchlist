@@ -1,3 +1,9 @@
+# === Project: punchlist ===
+#
+# iOS app — builds remotely on macOS host via SSH.
+# Standard recipes: develop, test, build, fmt, check, ship
+# iOS-specific: sync, build-device, archive, distribute, install, clean
+
 set dotenv-load
 
 project := "Punchlist.xcodeproj"
@@ -12,16 +18,28 @@ export_path := "~/PunchlistExport"
 default:
     @just --list
 
-# Run the test suite
+# --- Environment ---
+
+# Enter nix development shell
+develop:
+    nix develop
+
+# --- Quality ---
+
+# Run the test suite (on macOS build host)
 test: sync
     #!/usr/bin/env bash
     nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && xcodebuild test -project {{project}} -scheme PunchlistTests -sdk iphonesimulator -destination \"platform=iOS Simulator,name={{simulator}}\" 2>&1 | tail -50'"
 
-# Sync source to build host
-sync:
-    #!/usr/bin/env bash
-    nix shell nixpkgs#sshpass nixpkgs#rsync --command bash -c "sshpass -p '$BUILD_PASS' rsync -avz --exclude='.git' --exclude='.tickets' --exclude='.env' --exclude='.ko' . $BUILD_USER@$BUILD_HOST:{{remote_dir}}/"
+# Format Swift source
+fmt:
+    swift-format format --in-place --recursive Punchlist/ PunchlistTests/
+
+# Run all quality checks
+check: fmt test
+
+# --- Build ---
 
 # Build for iOS simulator
 build: sync
@@ -34,6 +52,25 @@ build-device: sync
     #!/usr/bin/env bash
     nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
       'cd {{remote_dir}} && xcodebuild -project {{project}} -scheme {{scheme}} -sdk iphoneos -configuration Release build 2>&1 | tail -20'"
+
+# Type-check Swift without full build
+typecheck: sync
+    #!/usr/bin/env bash
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+      'cd {{remote_dir}} && swiftc -typecheck -sdk \$(xcrun --sdk iphonesimulator --show-sdk-path) -target arm64-apple-ios17.0-simulator Punchlist/**/*.swift 2>&1'"
+
+# Remove build artifacts on build host
+clean:
+    #!/usr/bin/env bash
+    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
+      'cd {{remote_dir}} && xcodebuild -project {{project}} -scheme {{scheme}} clean 2>&1'"
+
+# --- iOS Distribution ---
+
+# Sync source to build host
+sync:
+    #!/usr/bin/env bash
+    nix shell nixpkgs#sshpass nixpkgs#rsync --command bash -c "sshpass -p '$BUILD_PASS' rsync -avz --exclude='.git' --exclude='.tickets' --exclude='.env' --exclude='.ko' . $BUILD_USER@$BUILD_HOST:{{remote_dir}}/"
 
 # Archive for ad-hoc distribution
 archive: sync
@@ -156,19 +193,21 @@ install:
     @echo "$DIST_URL"
     @echo "Open on your iOS device to install."
 
-# Clean build artifacts on build host
-clean:
-    #!/usr/bin/env bash
-    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
-      'cd {{remote_dir}} && xcodebuild -project {{project}} -scheme {{scheme}} clean 2>&1'"
+# --- Shipping ---
 
 # Post-agent-session: push and distribute
 agent-session-complete:
     git push
     just distribute
 
-# Type-check Swift files without full build
-check: sync
+# Commit and push. CI handles deployment.
+ship message="ship":
     #!/usr/bin/env bash
-    nix shell nixpkgs#sshpass --command bash -c "sshpass -p '$BUILD_PASS' ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password $BUILD_USER@$BUILD_HOST \
-      'cd {{remote_dir}} && swiftc -typecheck -sdk \$(xcrun --sdk iphonesimulator --show-sdk-path) -target arm64-apple-ios17.0-simulator Punchlist/**/*.swift 2>&1'"
+    set -euo pipefail
+    if ! git diff --quiet HEAD 2>/dev/null \
+        || ! git diff --cached --quiet 2>/dev/null \
+        || [ -n "$(git ls-files --others --exclude-standard)" ]; then
+        git add -A
+        git commit -m "{{message}}"
+    fi
+    git push

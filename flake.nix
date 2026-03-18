@@ -17,6 +17,7 @@
             just
             rsync
             sshpass
+            swift-format
           ];
 
           shellHook = ''

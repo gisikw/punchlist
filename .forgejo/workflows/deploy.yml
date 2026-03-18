@@ -1,0 +1,26 @@
+name: Build and Distribute
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: nixos
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Format Check
+        run: nix develop -c swift-format lint --recursive Punchlist/ PunchlistTests/
+
+      - name: Sync to Build Host
+        run: nix develop -c just sync
+
+      - name: Build
+        run: nix develop -c just build
+
+      - name: Test
+        run: nix develop -c just test
+
+      - name: Distribute
+        run: nix develop -c just distribute

@@ -1,6 +1,6 @@
 ---
 id: pun-054b
-status: resolved
+status: closed
 deps: []
 created: 2026-03-05T12:44:32Z
 type: task

@@ -64,28 +64,31 @@ struct ContentView: View {
     }
 
     private var projectPicker: some View {
-        VStack(spacing: 0) {
-            ForEach(viewModel.projects) { project in
-                Button {
-                    viewModel.switchToProject(slug: project.slug)
-                    expandedItemID = nil
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        showProjectPicker = false
+        ScrollView {
+            VStack(spacing: 0) {
+                ForEach(viewModel.projects) { project in
+                    Button {
+                        viewModel.switchToProject(slug: project.slug)
+                        expandedItemID = nil
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showProjectPicker = false
+                        }
+                    } label: {
+                        HStack {
+                            Text(project.slug == "user" ? "personal" : "#\(project.slug)")
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundStyle(project.slug == (viewModel.currentProject?.slug ?? "") ? Color.punchText : Color.punchGray)
+                                .tracking(0.5)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
                     }
-                } label: {
-                    HStack {
-                        Text(project.slug == "user" ? "personal" : "#\(project.slug)")
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(project.slug == (viewModel.currentProject?.slug ?? "") ? Color.punchText : Color.punchGray)
-                            .tracking(0.5)
-                        Spacer()
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 10)
                 }
             }
+            .padding(.bottom, 8)
         }
-        .padding(.bottom, 8)
+        .frame(maxHeight: 300)
     }
 
     private var header: some View {

@@ -28,9 +28,9 @@ The key insight: **your next action belongs at the bottom of the list, not the t
 
 Punchlist is built on a few deliberate constraints:
 
-- **No local database.** State lives on a server and syncs over WebSocket. Your list is always current, never stale.
-- **No offline anxiety.** If you lose connection, mutations queue up in memory and replay when you're back. You never notice.
-- **No dependencies.** Zero third-party libraries. URLSession for HTTP, URLSessionWebSocketTask for WebSocket. That's the whole networking stack.
+- **No local database.** State lives on a server and syncs over SSE. Your list is always current, never stale.
+- **No offline anxiety.** Mutations fire immediately regardless of connection state. If the network is down, they fail silently — the SSE reconnect will restore current state.
+- **No dependencies.** Zero third-party libraries. URLSession for HTTP, URLSession delegate for SSE streaming. That's the whole networking stack.
 - **No reordering UI.** You can finish things and you can pick what's next. That's the entire interaction model. Fewer choices means less friction.
 
 ## Wait, what's that other list?
