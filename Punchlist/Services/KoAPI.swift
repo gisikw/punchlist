@@ -3,7 +3,7 @@ import Foundation
 struct KoAPI {
     let baseURL: URL
 
-    init(baseURL: URL = URL(string: "https://knockout.gisi.network")!) {
+    init(baseURL: URL = URL(string: "https://ko.gisi.network")!) {
         self.baseURL = baseURL
     }
 

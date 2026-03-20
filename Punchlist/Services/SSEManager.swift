@@ -16,7 +16,7 @@ final class SSEManager {
     private var connectCount = 0
     private var currentProjectSlug: String = "user"
 
-    init(baseURL: URL = URL(string: "https://knockout.gisi.network")!) {
+    init(baseURL: URL = URL(string: "https://ko.gisi.network")!) {
         self.baseURL = baseURL
     }
 
