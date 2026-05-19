@@ -21,4 +21,6 @@ xcuserdata/
 .DS_Store
 *.swp
 
-.ko/
+.ko/tickets/
+.ko/builds/
+.ko/agent.*
